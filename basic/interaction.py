@@ -92,14 +92,14 @@ def avoid(update_map, agents):
         x_i = agents[agent_index][0]
         y_i = agents[agent_index][1]
         for neighbor_index in range(num_agents):
-            if (agent_index != neighbor_index): #and (update_map[agent_index, neighbor_index] == 1):
+            if agent_index != neighbor_index:   # and (update_map[agent_index, neighbor_index] == 1):
                 x_j = agents[neighbor_index][0]
                 y_j = agents[neighbor_index][1]
                 distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
                 if distance <= agents[0][3]:  # R_repulsion
                     neighbor_num = neighbor_num + 1
-                    r_x = r_x + (x_i - x_j)
-                    r_y = r_y + (y_i - y_j)
+                    r_x = r_x + (x_i - x_j)   # /distance  # unit vector
+                    r_y = r_y + (y_i - y_j)   # /distance  # unit vector
         if neighbor_num != 0:
             r_x = r_x / neighbor_num
             r_y = r_y / neighbor_num
@@ -108,7 +108,6 @@ def avoid(update_map, agents):
             num_avoid[agent_index] = neighbor_num
             Distance_avoid[agent_index] = np.sqrt(r_x ** 2 + r_y ** 2)
     return agents, num_avoid, Distance_avoid, angle_avoid
-
 
 @nb.jit(nopython=True)
 def align(map, agents):
@@ -172,10 +171,88 @@ def attract(agents):
     return agents, num_att, distance_att, angle_att, map_att
 
 
+
+@nb.jit(nopython=True)
+def Get_attraction_force(agents):
+    num_att = np.zeros(agents.shape[0])
+    f_attraction_x = np.zeros(agents.shape[0])
+    f_attraction_y = np.zeros(agents.shape[0])
+    for agent_index in range(agents.shape[0]):
+        neighbor_num = 0
+        r_x = 0
+        r_y = 0
+        x_i = agents[agent_index][0]
+        y_i = agents[agent_index][1]
+        for neighbor_index in range(agents.shape[0]):
+            if agent_index != neighbor_index:  # and (map_att[agent_index, neighbor_index] == 1)
+                x_j = agents[neighbor_index][0]
+                y_j = agents[neighbor_index][1]
+                distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
+                if (distance >= agents[0][3]) and (distance <= agents[0][5]):
+                    neighbor_num = neighbor_num + 1
+                    r_x = r_x + (x_j - x_i) / distance  # unit vector
+                    r_y = r_y + (y_j - y_i) / distance  # unit vector
+        num_att[agent_index] = neighbor_num
+        f_attraction_x[agent_index] = r_x
+        f_attraction_y[agent_index] = r_y
+
+    return num_att, f_attraction_x, f_attraction_y
+
+@nb.jit(nopython=True)
+def Get_repulsion_force(agents):
+    num_avoid = np.zeros(agents.shape[0])
+    f_avoid_x = np.zeros(agents.shape[0])
+    f_avoid_y = np.zeros(agents.shape[0])
+    for agent_index in range(agents.shape[0]):
+        neighbor_num = 0
+        r_x = 0
+        r_y = 0
+        x_i = agents[agent_index][0]
+        y_i = agents[agent_index][1]
+        for neighbor_index in range(agents.shape[0]):
+            if agent_index != neighbor_index:
+                x_j = agents[neighbor_index][0]
+                y_j = agents[neighbor_index][1]
+                distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
+                if distance <= agents[0][3]:  # R_repulsion
+                    neighbor_num = neighbor_num + 1
+                    r_x = r_x + (x_i - x_j) / distance  # unit vector
+                    r_y = r_y + (y_i - y_j) / distance  # unit vector
+        num_avoid[agent_index] = neighbor_num
+        f_avoid_x[agent_index] = r_x
+        f_avoid_y[agent_index] = r_y
+
+    return num_avoid, f_avoid_x, f_avoid_y
+
+@nb.jit(nopython=True)
+def Get_shepherd_force(agents, shepherd):
+    num_shepherd_avoid = np.zeros(agents.shape[0])
+    f_shepherd_force_x = np.zeros(agents.shape[0])
+    f_shepherd_force_y = np.zeros(agents.shape[0])
+
+    safe_distance = agents[0][17]  # safe_distance
+    for agent_index in range(agents.shape[0]):
+        agent_x = agents[agent_index][0]
+        agent_y = agents[agent_index][1]
+        r_x = 0
+        r_y = 0
+        num_shepherd = 0
+        for shepherd_index in range(shepherd.shape[0]):
+            shepherd_x = shepherd[shepherd_index][0]
+            shepherd_y = shepherd[shepherd_index][1]
+            distance = np.sqrt((agent_x - shepherd_x)**2 + (agent_y - shepherd_y)**2)
+            if distance <= safe_distance:
+                num_shepherd = num_shepherd + 1
+                r_x = r_x + (agent_x - shepherd_x) / distance  # unit vector  ?? check distance == 0 ?
+                r_y = r_y + (agent_y - shepherd_y) / distance  # unit vector
+        num_shepherd_avoid[agent_index] = num_shepherd
+        f_shepherd_force_x[agent_index] = r_x
+        f_shepherd_force_y[agent_index] = r_y
+    return num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y
+
 @nb.jit(nopython=True)
 def update_agents_state(agents, target_x, target_y, target_size):
-    num_agents = agents.shape[0]
-    for agent_index in range(num_agents):
+    for agent_index in range(agents.shape[0]):
         agent_x = agents[agent_index][0]
         agent_y = agents[agent_index][1]
         distance, angle = Get_relative_distance_angle(agent_x, agent_y, target_x, target_y)
@@ -189,67 +266,46 @@ def update_agents_state(agents, target_x, target_y, target_size):
 
 @nb.jit(nopython=True)
 def update(agents, shepherd):  # map,
-    num_agents = agents.shape[0]
-    agents, num_att, distance_att, angle_att, updated_map = attract(agents)  # update the map as well
-    agents, num_avoid, distance_avoid, angle_avoid = avoid(updated_map, agents)
-    agents, num_align, angle_align = align(updated_map, agents)
-    agents, num_shepherd, distance_shepherd, angle_shepherd_avoid = avoid_shepherd(agents, shepherd)
+
     v0 = agents[0][6]
     K_repulsion_agent = agents[0][10]  # K_repulsion_agent
     K_attraction_agent = agents[0][11]  # K_attraction_agent
     K_repulsion_shepherd = agents[0][12]  # K_repulsion_shepherd
     K_Dr = agents[0][13]  # noise_strength
     tick_time = agents[0][14]  # tick_time
-    alpha = agents[0][15]  # alpha: acceleration rate
-    beta = agents[0][16]  # beta: turning rate
-    dis_repulsion = agents[0][3]
     max_turning_angle = agents[0][18]  # np.pi*2/3
 
-    for agent_index in range(num_agents):
-        agent_state = agents[agent_index][21]
-        # if agent_state == 0:  # moving
-        f_avoid_agent_x = 0
-        f_avoid_agent_y = 0
-        f_att_agent_x = 0
-        f_att_agent_y = 0
-        f_avoid_shepherd_x = 0
-        f_avoid_shepherd_y = 0
-        if num_avoid[agent_index] != 0:  # repulsion_force_of_agents, highest priority
-            f_avoid_agent_x = ((dis_repulsion - distance_avoid[agent_index])**3) * np.cos(angle_avoid[agent_index]) #(1 / distance_avoid[agent_index])
-            f_avoid_agent_y = ((dis_repulsion - distance_avoid[agent_index])**3) * np.sin(angle_avoid[agent_index]) #(1 / distance_avoid[agent_index])
+    # agents, num_att, distance_att, angle_att, updated_map = attract(agents)  # update the map as well
+    # agents, num_avoid, distance_avoid, angle_avoid = avoid(updated_map, agents)
+    # agents, num_align, angle_align = align(updated_map, agents)
+    num_avoid, f_avoid_x, f_avoid_y = Get_repulsion_force(agents)
+    num_att, f_attraction_x, f_attraction_y = Get_attraction_force(agents)
+    num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y = Get_shepherd_force(agents, shepherd)
+    # agents, num_shepherd, distance_shepherd, angle_shepherd_avoid = avoid_shepherd(agents, shepherd)
 
-        if num_att[agent_index] != 0:  # attraction_force_of_agents
-            f_att_agent_x = (distance_att[agent_index]) * np.cos(angle_att[agent_index])
-            f_att_agent_y = (distance_att[agent_index]) * np.sin(angle_att[agent_index])
-
-        if num_shepherd[agent_index] != 0:  # avoid shepherd
-            f_avoid_shepherd_x = distance_shepherd[agent_index] * np.cos(angle_shepherd_avoid[agent_index])
-            f_avoid_shepherd_y = distance_shepherd[agent_index] * np.sin(angle_shepherd_avoid[agent_index])
+    for agent_index in range(agents.shape[0]):
 
         if num_avoid[agent_index] != 0:   #### first priority!!!
-            f_x = f_avoid_agent_x * K_repulsion_agent
-            f_y = f_avoid_agent_y * K_repulsion_agent
+            f_x = f_avoid_x[agent_index] * K_repulsion_agent
+            f_y = f_avoid_y[agent_index] * K_repulsion_agent
         else:
-            f_x = f_att_agent_x * K_attraction_agent + f_avoid_shepherd_x * K_repulsion_shepherd
-            f_y = f_att_agent_y * K_attraction_agent + f_avoid_shepherd_y * K_repulsion_shepherd
-
-        # f_x = f_avoid_agent_x * K_repulsion_agent + f_att_agent_x * K_attraction_agent + f_avoid_shepherd_x * K_repulsion_shepherd
-        # f_y = f_avoid_agent_y * K_repulsion_agent + f_att_agent_y * K_attraction_agent + f_avoid_shepherd_y * K_repulsion_shepherd
+            f_x = f_attraction_x[agent_index] * K_attraction_agent + f_shepherd_force_x[agent_index] * K_repulsion_shepherd
+            f_y = f_attraction_y[agent_index] * K_attraction_agent + f_shepherd_force_y[agent_index] * K_repulsion_shepherd
 
         v_dot = f_x * np.cos(agents[agent_index][2]) + f_y * np.sin(agents[agent_index][2])
-        w_dot = (-f_x * np.sin(agents[agent_index][2]) + f_y * np.cos(agents[agent_index][2]))  # inertia (1 / v0) *
+        w_dot = (-f_x * np.sin(agents[agent_index][2]) + f_y * np.cos(agents[agent_index][2])) * (1/v0)  # inertia
 
         if w_dot > max_turning_angle:
             w_dot = max_turning_angle
         if w_dot <= -max_turning_angle:
             w_dot = -max_turning_angle
+
         Dr = np.sqrt(2 * K_Dr) / (tick_time ** 0.5) * np.random.normal(0, 1)
-        agents[agent_index][0] = agents[agent_index][0] + (v0 + v_dot * alpha) * np.cos(
-            agents[agent_index][2]) * tick_time  # alpha = 1 acceleration
-        agents[agent_index][1] = agents[agent_index][1] + (v0 + v_dot * alpha) * np.sin(
-            agents[agent_index][2]) * tick_time  # beta = 1 turning rate
-        agents[agent_index][2] = reflect_angle(agents[agent_index][2] + (w_dot * beta + Dr) * tick_time)
-    return agents, updated_map
+
+        agents[agent_index][0] = (agents[agent_index][0] + (v0 + v_dot) * np.cos(agents[agent_index][2]) * tick_time)
+        agents[agent_index][1] = (agents[agent_index][1] + (v0 + v_dot) * np.sin(agents[agent_index][2]) * tick_time)
+        agents[agent_index][2] = reflect_angle(agents[agent_index][2] + (w_dot + Dr) * tick_time)
+    return agents
 
 
 @nb.jit(nopython=True)
@@ -452,8 +508,8 @@ def make_preodic_boundary(agents, space_x, space_y):
 @nb.jit(nopython=True)
 def evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size):
     # map = create_neighbor_map_euc(agents)
-    # agents_update, updated_map = update(map, agents, shepherd)
-    agents_update, updated_map = update(agents, shepherd)
+    agents_update = update(agents, shepherd)
     shepherd_update, max_agents_indexes = herd(agents, shepherd, Target_place_x, Target_place_y)
-    update_agents_state(agents, Target_place_x, Target_place_y, Target_size)
-    return updated_map, agents_update, shepherd_update, max_agents_indexes
+    update_agents_state(agents_update, Target_place_x, Target_place_y, Target_size)
+
+    return agents_update, shepherd_update, max_agents_indexes
