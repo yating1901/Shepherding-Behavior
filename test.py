@@ -13,7 +13,7 @@ from basic.save_data import save_data
 from basic.draw_states import draw_state, draw_state_single
 from basic.draw import draw_single, draw_dynamic
 from basic.create_video import create_video
-# import cv2
+
 
 N_sheep = 100
 N_shepherd = 1

@@ -2,7 +2,7 @@ import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import cv2
+
 # import shutil
 from turtle import *
 
