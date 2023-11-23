@@ -22,7 +22,7 @@ Space_y = 150
 
 Target_place_x = 350
 Target_place_y = 350
-Target_size = 50
+Target_size = 50  # radius
 
 Boundary_x = Target_place_x + Target_size
 Boundary_y = Target_place_y + Target_size

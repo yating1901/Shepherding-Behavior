@@ -16,15 +16,16 @@ from basic.create_video import create_video
 # import cv2
 
 # N_sheep = 100
-# N_shepherd = 2
-Space_x = 100
-Space_y = 100
-Boundary_x = 400
-Boundary_y = 400
+# N_shepherd = 1
+Space_x = 150
+Space_y = 150
 
 Target_place_x = 350
 Target_place_y = 350
-Target_size = 50
+Target_size = 50  # radius
+
+Boundary_x = Target_place_x + Target_size
+Boundary_y = Target_place_y + Target_size
 
 # Iterations = 100
 TICK = 0
@@ -55,18 +56,16 @@ if __name__ == '__main__':
             Data_shepherds = np.zeros((shepherd.shape[0], shepherd.shape[1], Iterations), float)
             Max_agents_indexes = np.zeros((N_shepherd, Iterations), int)
 
-        map, agents_update, shepherd_update, max_agents_indexes = evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size)
-
-        # agents_update = make_preodic_boundary(agents_update, Boundary_x, Boundary_y)
-        # shepherd_update = make_preodic_boundary(shepherd_update, Boundary_x, Boundary_y)
-        Data_agents[:, :, tick] = agents
-        Data_shepherds[:, :, tick] = shepherd
-        Map_agents[:, :, tick] = map
-        Max_agents_indexes[:, tick] = max_agents_indexes    #only two dimension
+        agents_update, shepherd_update, max_agents_indexes = evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size)
 
         agents = agents_update
         shepherd = shepherd_update
-        if sum(agents[:, 21]) == N_sheep:   # finish
+        Data_agents[:, :, tick] = agents
+        Data_shepherds[:, :, tick] = shepherd
+        # Map_agents[:, :, tick] = map
+        Max_agents_indexes[:, tick] = max_agents_indexes  # only two dimension
+
+        if sum(agents[:, 21]) == N_sheep:  # finish
             Final_iterations = tick
             break
     # draw_dynamic(Final_iterations, Data_agents, Data_shepherds, Map_agents, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)

@@ -3,6 +3,33 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+@nb.jit(nopython=True)
+def create_metric_network(agents, l0):  # l0: range of interaction
+    num_agents = agents.shape[0]
+    map = np.zeros(shape=(num_agents, num_agents))
+    R = agents[0][5]  # length of attraction
+
+    for agent_index in range(num_agents):
+
+        x_i = agents[agent_index, 0]
+        y_i = agents[agent_index, 1]
+        theata_i = agents[agent_index, 2]
+        Fov = agents[agent_index][19]  # field of view np.pi/2
+
+        for neighbor_index in range(num_agents):
+            if agent_index != neighbor_index:
+                x_j = agents[neighbor_index, 0]
+                y_j = agents[neighbor_index, 1]
+                r_x = x_j - x_i
+                r_y = y_j - x_j
+                theata_j = math.atan2(r_y, r_x)
+                theata_ij = theata_i - theata_j
+                if ((x_i + R) >= x_j) and ((x_i - R) <= x_j):  # and (abs(theata_ij) <= Fov):
+                    if ((y_i + R) >= y_j) and ((y_i - R) <= y_j):
+                        map[agent_index, neighbor_index] = 1
+        # print("map:", map)
+    return map
+
 
 @nb.jit(nopython=True)
 def create_neighbor_map_euc(agents):
@@ -258,7 +285,7 @@ def update_agents_state(agents, target_x, target_y, target_size):
         distance, angle = Get_relative_distance_angle(agent_x, agent_y, target_x, target_y)
         if distance <= target_size:
             agents[agent_index][21] = 1  # agent state: 0 -> moving; 1 -> staying;
-            agents[agent_index][3] = 0  # v_0 =0
+            # agents[agent_index][3] = 0   # v_0 =0
         else:
             agents[agent_index][21] = 0
     return
@@ -455,7 +482,7 @@ def herd(agents, shepherd, target_place_x, target_place_y):
             max_agents_indexes[shepherd_index] = int(max_agent_index)
             distance_agent_mass, angle_agent_mass = Get_relative_distance_angle(agent_x, agent_y,
                                                                                 center_of_mass_x, center_of_mass_y, )
-            if distance_agent_mass > d_furthest:
+            if (distance_agent_mass > d_furthest) and (agents[max_agent_index][21] == 0.0):  # far enough and moving
                 shepherd[shepherd_index][13] = 0.0  # collect_mode = true
                 shepherd[shepherd_index][16] = int(max_agent_index)
         else:
