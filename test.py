@@ -13,8 +13,8 @@ from basic.save_data import save_data
 from basic.draw_states import draw_state, draw_state_single
 from basic.draw import draw_single, draw_dynamic
 
-N_sheep = 100
-N_shepherd = 1
+N_sheep = 250
+N_shepherd = 2
 Space_x = 150
 Space_y = 150
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     shepherd = initate_shepherd(0)                           #initate_shepherd(N_shepherd)
     Data_agents = np.zeros((agents.shape[0], agents.shape[1], Iterations), float)
     Data_shepherds = np.zeros((shepherd.shape[0], shepherd.shape[1], Iterations), float)
-    Map_agents = np.zeros((N_sheep, N_sheep, Iterations), float)
+    # Map_agents = np.zeros((N_sheep, N_sheep, Iterations), float)
     Max_agents_indexes = np.zeros((shepherd.shape[0], Iterations), int)
     Final_iterations = Iterations
 

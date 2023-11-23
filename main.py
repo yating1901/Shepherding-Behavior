@@ -46,7 +46,7 @@ if __name__ == '__main__':
     shepherd = initate_shepherd(0)                           #  initate_shepherd(N_shepherd)
     Data_agents = np.zeros((agents.shape[0], agents.shape[1], Iterations), float)
     Data_shepherds = np.zeros((shepherd.shape[0], shepherd.shape[1], Iterations), float)
-    Map_agents = np.zeros((N_sheep, N_sheep, Iterations), float)
+    #Map_agents = np.zeros((N_sheep, N_sheep, Iterations), float)
     Max_agents_indexes = np.zeros((shepherd.shape[0], Iterations), int)
     Final_iterations = Iterations
 
