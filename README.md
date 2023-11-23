@@ -1,5 +1,5 @@
 # Shepherding-Behavior
-<<<<<<< HEAD
+
 =======
-This code implements the shepherding behavior based on agent-based modeling
+This code implements the shepherding behaviour based on agent-based modelling
 >>>>>>> origin/main
