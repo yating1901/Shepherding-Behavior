@@ -24,7 +24,7 @@ def initate(agent_num, space_x, space_y, Target_size):
     swarm[:, 16] = 1             # beta: turning rate  1
     swarm[:, 17] = 65             #### safe_distance  45
     swarm[:, 18] = np.pi*2/3      # maximum turning rate
-    swarm[:, 19] = np.pi          # field of view np.pi * 4 / 3
+    swarm[:, 19] = np.pi          # field of view np.pi * 4 / 3  #240 degree
     swarm[:, 20] = Target_size
     swarm[:, 21] = 0              # agent state: moving -> 0; staying -> 1;
     return swarm

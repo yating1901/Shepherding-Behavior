@@ -13,16 +13,14 @@ from basic.save_data import save_data
 from basic.draw_states import draw_state, draw_state_single
 from basic.draw import draw_single, draw_dynamic
 
-
-
 N_sheep = 100
 N_shepherd = 1
 Space_x = 150
 Space_y = 150
 
-Target_place_x = 350
-Target_place_y = 350
-Target_size = 50  # radius
+Target_place_x = 400
+Target_place_y = 400
+Target_size = 100  # radius
 
 Boundary_x = Target_place_x + Target_size
 Boundary_y = Target_place_y + Target_size
@@ -32,7 +30,7 @@ TICK = 10000
 Repetition = 1
 if __name__ == '__main__':
     agents = initate(N_sheep, Space_x, Space_y, Target_size)
-    shepherd = initate_shepherd(0)                           #  initate_shepherd(N_shepherd)
+    shepherd = initate_shepherd(0)                           #initate_shepherd(N_shepherd)
     Data_agents = np.zeros((agents.shape[0], agents.shape[1], Iterations), float)
     Data_shepherds = np.zeros((shepherd.shape[0], shepherd.shape[1], Iterations), float)
     Map_agents = np.zeros((N_sheep, N_sheep, Iterations), float)
@@ -64,4 +62,4 @@ if __name__ == '__main__':
 
     # draw_state_single(Final_iterations, Data_shepherds)
 
-    # save_data(N_sheep, N_shepherd, Repetition, Final_iterations, Data_agents, Data_shepherds)
+    save_data(N_sheep, N_shepherd, Repetition, Final_iterations, Data_agents, Data_shepherds)

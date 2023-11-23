@@ -20,15 +20,15 @@ from basic.draw import draw_single, draw_dynamic
 Space_x = 150
 Space_y = 150
 
-Target_place_x = 350
-Target_place_y = 350
-Target_size = 50  # radius
+Target_place_x = 400
+Target_place_y = 400
+Target_size = 100  # radius
 
 Boundary_x = Target_place_x + Target_size
 Boundary_y = Target_place_y + Target_size
 
 # Iterations = 100
-TICK = 0
+TICK = 10000
 # Repetition = 5     #1
 # f = open("result.txt", "x")
 if __name__ == '__main__':

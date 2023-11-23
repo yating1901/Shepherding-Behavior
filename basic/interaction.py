@@ -4,59 +4,33 @@ import matplotlib.pyplot as plt
 import math
 
 @nb.jit(nopython=True)
-def create_metric_network(agents, l0):  # l0: range of interaction
+def create_metric_network(agents):
+    # get number of agents
     num_agents = agents.shape[0]
-    map = np.zeros(shape=(num_agents, num_agents))
-    R = agents[0][5]  # length of attraction
-
+    # create a metric with N * N dimension
+    metric_network = np.zeros(shape=(num_agents, num_agents))
+    # length of attraction: maximum interaction range for agent
+    R = agents[0][5]
+    # loop agents
     for agent_index in range(num_agents):
-
         x_i = agents[agent_index, 0]
         y_i = agents[agent_index, 1]
-        theata_i = agents[agent_index, 2]
-        Fov = agents[agent_index][19]  # field of view np.pi/2
-
+        angle_i = agents[agent_index, 2]
+        # field of view np.pi/2 -- to be used
+        Fov = agents[agent_index][19]
         for neighbor_index in range(num_agents):
             if agent_index != neighbor_index:
                 x_j = agents[neighbor_index, 0]
                 y_j = agents[neighbor_index, 1]
-                r_x = x_j - x_i
-                r_y = y_j - x_j
-                theata_j = math.atan2(r_y, r_x)
-                theata_ij = theata_i - theata_j
-                if ((x_i + R) >= x_j) and ((x_i - R) <= x_j):  # and (abs(theata_ij) <= Fov):
-                    if ((y_i + R) >= y_j) and ((y_i - R) <= y_j):
-                        map[agent_index, neighbor_index] = 1
-        # print("map:", map)
-    return map
-
-
-@nb.jit(nopython=True)
-def create_neighbor_map_euc(agents):
-    num_agents = agents.shape[0]
-    map = np.zeros(shape=(num_agents, num_agents))
-    R = agents[0][5]  # length of attraction
-
-    for agent_index in range(num_agents):
-
-        x_i = agents[agent_index, 0]
-        y_i = agents[agent_index, 1]
-        theata_i = agents[agent_index, 2]
-        Fov = agents[agent_index][19]  # field of view np.pi/2
-
-        for neighbor_index in range(num_agents):
-            if agent_index != neighbor_index:
-                x_j = agents[neighbor_index, 0]
-                y_j = agents[neighbor_index, 1]
-                r_x = x_j - x_i
-                r_y = y_j - x_j
-                theata_j = math.atan2(r_y, r_x)
-                theata_ij = theata_i - theata_j
-                if ((x_i + R) >= x_j) and ((x_i - R) <= x_j):  # and (abs(theata_ij) <= Fov):
-                    if ((y_i + R) >= y_j) and ((y_i - R) <= y_j):
-                        map[agent_index, neighbor_index] = 1
-        # print("map:", map)
-    return map
+                # distance between agent i and agent j
+                r_ij = np.sqrt((x_j - x_i)**2 + (y_i - y_j)**2)
+                # vector from agent j position to agent i position
+                angle_ij = math.atan2((y_j - y_i), (x_j - x_i))
+                # vectory from the heading direction of agent i to vector_ij
+                difference_ij = angle_i - angle_ij
+                if r_ij <= R:  # and (abs(angle_ij) <= Fov):
+                    metric_network[agent_index, neighbor_index] = 1
+    return metric_network
 
 
 @nb.jit(nopython=True)
@@ -71,132 +45,6 @@ def reflect_angle(angle):
     while angle <= 0:
         angle = angle + 2 * np.pi
     return angle
-
-
-@nb.jit(nopython=True)
-def avoid_shepherd(agents, shepherd):
-    num_agents = agents.shape[0]
-    num_shepherd = shepherd.shape[0]
-
-    num_shepherd_avoid = np.zeros(agents.shape[0])
-    distance_shepherd_avoid = np.zeros(agents.shape[0])
-    angle_shepherd_avoid = np.zeros(agents.shape[0])
-    for agent_index in range(num_agents):
-        r_x = 0
-        r_y = 0
-        x_i = agents[agent_index][0]
-        y_i = agents[agent_index][1]
-        safe_distance = agents[agent_index][17]  # safe_distance
-        num_j = 0
-        for shepherd_index in range(num_shepherd):
-            x_j = shepherd[shepherd_index][0]
-            y_j = shepherd[shepherd_index][1]
-            distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
-            if distance <= safe_distance:
-                num_j = num_j + 1
-                r_x = r_x + (x_i - x_j)
-                r_y = r_y + (y_i - y_j)
-        if num_j != 0:
-            r_x = r_x / num_j
-            r_y = r_y / num_j
-            angle = math.atan2(r_y, r_x)
-            angle_shepherd_avoid[agent_index] = reflect_angle(angle)  # force_of_shepherd  agents[agent_index][8]
-        num_shepherd_avoid[agent_index] = num_j
-        distance_shepherd_avoid[agent_index] = np.sqrt(r_x ** 2 + r_y ** 2)
-    return agents, num_shepherd_avoid, distance_shepherd_avoid, angle_shepherd_avoid
-
-
-@nb.jit(nopython=True)
-def avoid(update_map, agents):
-    num_agents = agents.shape[0]
-    num_avoid = np.zeros(agents.shape[0])
-    Distance_avoid = np.zeros(agents.shape[0])
-    angle_avoid = np.zeros(agents.shape[0])
-    for agent_index in range(num_agents):
-        neighbor_num = 0
-        r_x = 0
-        r_y = 0
-        x_i = agents[agent_index][0]
-        y_i = agents[agent_index][1]
-        for neighbor_index in range(num_agents):
-            if agent_index != neighbor_index:   # and (update_map[agent_index, neighbor_index] == 1):
-                x_j = agents[neighbor_index][0]
-                y_j = agents[neighbor_index][1]
-                distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
-                if distance <= agents[0][3]:  # R_repulsion
-                    neighbor_num = neighbor_num + 1
-                    r_x = r_x + (x_i - x_j)   # /distance  # unit vector
-                    r_y = r_y + (y_i - y_j)   # /distance  # unit vector
-        if neighbor_num != 0:
-            r_x = r_x / neighbor_num
-            r_y = r_y / neighbor_num
-            theata = math.atan2(r_y, r_x)
-            angle_avoid[agent_index] = reflect_angle(theata)  # vector_repulsion
-            num_avoid[agent_index] = neighbor_num
-            Distance_avoid[agent_index] = np.sqrt(r_x ** 2 + r_y ** 2)
-    return agents, num_avoid, Distance_avoid, angle_avoid
-
-@nb.jit(nopython=True)
-def align(map, agents):
-    num_agents = agents.shape[0]
-    num_align = np.zeros(agents.shape[0])
-    angle_align = np.zeros(agents.shape[0])
-    map_align = map
-    for agent_index in range(num_agents):
-        Theata_sum = 0  # theata_i
-        neighbor_num = 0
-        x_i = agents[agent_index][0]
-        y_i = agents[agent_index][1]
-        theata_i = agents[agent_index][2]
-        for neighbor_index in range(num_agents):
-            if (agent_index != neighbor_index) and (map_align[agent_index, neighbor_index] == 1):
-                x_j = agents[neighbor_index, 0]
-                y_j = agents[neighbor_index, 1]
-                distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
-                if (distance < agents[0][4]) and (distance > agents[0][3]):  # R_alignment
-                    neighbor_num = neighbor_num + 1
-                    Theata_sum = Theata_sum + agents[neighbor_index][2]  # theata_j
-        if neighbor_num != 0:
-            angle = (Theata_sum + theata_i) / (neighbor_num + 1)
-            angle_align[agent_index] = reflect_angle(angle)  # vector_alignment agents[agent_index][8]
-        num_align[agent_index] = neighbor_num
-    return agents, num_align, angle_align
-
-
-@nb.jit(nopython=True)
-def attract(agents):
-    num_agents = agents.shape[0]
-    map_att = np.zeros(shape=(num_agents, num_agents))
-    num_att = np.zeros(agents.shape[0])
-    distance_att = np.zeros(agents.shape[0])
-    angle_att = np.zeros(agents.shape[0])
-    for agent_index in range(num_agents):
-        neighbor_num = 0
-        r_x = 0
-        r_y = 0
-        x_i = agents[agent_index][0]
-        y_i = agents[agent_index][1]
-        for neighbor_index in range(num_agents):
-            if agent_index != neighbor_index:  # and (map_att[agent_index, neighbor_index] == 1)
-                x_j = agents[neighbor_index][0]
-                y_j = agents[neighbor_index][1]
-                distance = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
-                if (distance >= agents[0][3]) and (distance <= agents[0][5]):
-                    neighbor_num = neighbor_num + 1
-                    r_x = r_x + (x_j - x_i)
-                    r_y = r_y + (y_j - y_i)
-                    map_att[agent_index, neighbor_index] = 1
-                if distance > agents[0][5]:
-                    map_att[agent_index, neighbor_index] = 0
-        if neighbor_num > 0:
-            r_x = r_x / neighbor_num
-            r_y = r_y / neighbor_num
-            angle = math.atan2(r_y, r_x)
-            angle_att[agent_index] = reflect_angle(angle)  # [0, 2*pi]
-            num_att[agent_index] = neighbor_num
-            distance_att[agent_index] = np.sqrt(r_x ** 2 + r_y ** 2) - agents[0][3] ## distance = 0 at the edge of repulsion range
-    return agents, num_att, distance_att, angle_att, map_att
-
 
 
 @nb.jit(nopython=True)
@@ -292,8 +140,8 @@ def update_agents_state(agents, target_x, target_y, target_size):
 
 
 @nb.jit(nopython=True)
-def update(agents, shepherd):  # map,
-
+def update(agents, shepherd, network_matrix):
+    # get variables
     v0 = agents[0][6]
     K_repulsion_agent = agents[0][10]  # K_repulsion_agent
     K_attraction_agent = agents[0][11]  # K_attraction_agent
@@ -302,13 +150,12 @@ def update(agents, shepherd):  # map,
     tick_time = agents[0][14]  # tick_time
     max_turning_angle = agents[0][18]  # np.pi*2/3
 
-    # agents, num_att, distance_att, angle_att, updated_map = attract(agents)  # update the map as well
-    # agents, num_avoid, distance_avoid, angle_avoid = avoid(updated_map, agents)
-    # agents, num_align, angle_align = align(updated_map, agents)
+    # calculate agent-agent repulsion force
     num_avoid, f_avoid_x, f_avoid_y = Get_repulsion_force(agents)
+    # calculate agent-agent attraction force
     num_att, f_attraction_x, f_attraction_y = Get_attraction_force(agents)
+    # calculate agent-shepherd repulsion force
     num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y = Get_shepherd_force(agents, shepherd)
-    # agents, num_shepherd, distance_shepherd, angle_shepherd_avoid = avoid_shepherd(agents, shepherd)
 
     for agent_index in range(agents.shape[0]):
 
@@ -534,8 +381,10 @@ def make_preodic_boundary(agents, space_x, space_y):
 
 @nb.jit(nopython=True)
 def evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size):
-    # map = create_neighbor_map_euc(agents)
-    agents_update = update(agents, shepherd)
+
+    network_matrix = create_metric_network(agents)
+    agents_update = update(agents, shepherd, network_matrix)
+
     shepherd_update, max_agents_indexes = herd(agents, shepherd, Target_place_x, Target_place_y)
     update_agents_state(agents_update, Target_place_x, Target_place_y, Target_size)
 
