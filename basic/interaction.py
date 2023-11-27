@@ -3,35 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-@nb.jit(nopython=True)
-def create_metric_network(agents):
-    # get number of agents
-    num_agents = agents.shape[0]
-    # create a metric with N * N dimension
-    metric_network = np.zeros(shape=(num_agents, num_agents))
-    # length of attraction: maximum interaction range for agent
-    R = agents[0][5]
-    # loop agents
-    for agent_index in range(num_agents):
-        x_i = agents[agent_index, 0]
-        y_i = agents[agent_index, 1]
-        angle_i = agents[agent_index, 2]
-        # field of view np.pi/2 -- to be used
-        Fov = agents[agent_index][19]
-        for neighbor_index in range(num_agents):
-            if agent_index != neighbor_index:
-                x_j = agents[neighbor_index, 0]
-                y_j = agents[neighbor_index, 1]
-                # distance between agent i and agent j
-                r_ij = np.sqrt((x_j - x_i)**2 + (y_i - y_j)**2)
-                # vector from agent j position to agent i position
-                angle_ij = math.atan2((y_j - y_i), (x_j - x_i))
-                # vectory from the heading direction of agent i to vector_ij
-                difference_ij = angle_i - angle_ij
-                if r_ij <= R:  # and (abs(angle_ij) <= Fov):
-                    metric_network[agent_index, neighbor_index] = 1
-    return metric_network
-
+from basic.Create_Network import create_metric_network
 
 @nb.jit(nopython=True)
 def reflect_angle(angle):
@@ -133,7 +105,7 @@ def update_agents_state(agents, target_x, target_y, target_size):
         distance, angle = Get_relative_distance_angle(agent_x, agent_y, target_x, target_y)
         if distance <= target_size:
             agents[agent_index][21] = 1  # agent state: 0 -> moving; 1 -> staying;
-            # agents[agent_index][3] = 0   # v_0 =0
+            # agents[agent_index][3] = 0.01   # v_0 =0
         else:
             agents[agent_index][21] = 0
     return
@@ -158,13 +130,15 @@ def update(agents, shepherd, network_matrix):
     num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y = Get_shepherd_force(agents, shepherd)
 
     for agent_index in range(agents.shape[0]):
-
         if num_avoid[agent_index] != 0:   #### first priority!!!
             f_x = f_avoid_x[agent_index] * K_repulsion_agent
             f_y = f_avoid_y[agent_index] * K_repulsion_agent
         else:
             f_x = f_attraction_x[agent_index] * K_attraction_agent + f_shepherd_force_x[agent_index] * K_repulsion_shepherd
             f_y = f_attraction_y[agent_index] * K_attraction_agent + f_shepherd_force_y[agent_index] * K_repulsion_shepherd
+
+        # f_x = f_avoid_x[agent_index] * K_repulsion_agent + f_attraction_x[agent_index] * K_attraction_agent  #+ f_shepherd_force_x[agent_index] * K_repulsion_shepherd
+        # f_y = f_avoid_x[agent_index] * K_repulsion_agent + f_attraction_y[agent_index] * K_attraction_agent  #+ f_shepherd_force_y[agent_index] * K_repulsion_shepherd
 
         v_dot = f_x * np.cos(agents[agent_index][2]) + f_y * np.sin(agents[agent_index][2])
         w_dot = (-f_x * np.sin(agents[agent_index][2]) + f_y * np.cos(agents[agent_index][2])) * (1/v0)  # inertia

@@ -7,7 +7,7 @@ import os
 from turtle import *
 
 # @nb.jit(nopython=True)  
-def draw_single(map, swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size):
+def draw_single(swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size):
     # draw sheep
     N = swarm.shape[0]
     for index in range(N):
@@ -56,7 +56,7 @@ def draw_single(map, swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Ta
 
 
  
-def draw_dynamic(Iterations, Data_agents, Data_shepherds, Map_agents, Space_x, Space_y,Target_place_x, Target_place_y, Target_size):
+def draw_dynamic(Iterations, Data_agents, Data_shepherds, Space_x, Space_y,Target_place_x, Target_place_y, Target_size):
     plt.figure(figsize=(8, 6), dpi=300)
     plt.ion()
     folder_path = os.getcwd() + "/images/"
@@ -72,7 +72,7 @@ def draw_dynamic(Iterations, Data_agents, Data_shepherds, Map_agents, Space_x, S
     for index in range(0, Iterations, 100): # range(0, Iterations, 10)
         # print(index)
         plt.cla()
-        draw_single(Map_agents[:, :, index], Data_agents[:, :, index], Data_shepherds[:, :, index], Space_x, Space_y, Target_place_x, Target_place_y , Target_size)
+        draw_single(Data_agents[:, :, index], Data_shepherds[:, :, index], Space_x, Space_y, Target_place_x, Target_place_y , Target_size)
         plt.title("tick = " + str(index))
         plt.savefig(folder_path + str(int(index/100)) + ".png")
         # plt.pause(0.01)
