@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def initate(agent_num, space_x, space_y, Target_size):
+def initiate(agent_num, space_x, space_y, Target_size):
     
     swarm = np.zeros(shape=(agent_num, 22))
     # swarm
@@ -29,7 +29,7 @@ def initate(agent_num, space_x, space_y, Target_size):
     swarm[:, 21] = 0             # agent state: moving -> 0; staying -> 1;
     return swarm
 
-def initate_shepherd(N_shepherd, agent_num):
+def initiate_shepherd(N_shepherd, agent_num):
     shepherd_swarm = np.zeros(shape=(N_shepherd, 22), dtype=float)
     # parameter
     shepherd_swarm[:, 0] = np.random.uniform(0, 50, N_shepherd)
