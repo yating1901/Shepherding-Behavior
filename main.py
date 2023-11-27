@@ -11,7 +11,7 @@ from basic.initiation import initiate, initiate_shepherd
 from basic.interaction import evolve, make_preodic_boundary
 from basic.save_data import save_data
 from basic.draw_states import draw_state, draw_state_single
-from basic.draw import draw_single, draw_dynamic
+from basic.draw import draw_single, draw_dynamic, plot_snapshot
 
 
 
@@ -78,5 +78,5 @@ if __name__ == '__main__':
     # draw_state(Final_iterations, Data_shepherds)
 
     # draw_state_single(Final_iterations, Data_shepherds)
-
+    plot_snapshot(agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
     save_data(N_sheep, N_shepherd, Repetition, Final_iterations, Data_agents, Data_shepherds)
