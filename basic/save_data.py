@@ -14,8 +14,9 @@ def save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_she
 
     Data = np.vstack((Data_agents, Data_shepherds))
     # save agents to .npy file
-    np.save(file=directory + "/"+ file_name + ".npy", arr=Data)
+    np.save(file=directory + "/" + file_name + ".npy", arr=Data)
     return
+
 
 def save_file(N_sheep, N_shepherd, Repetition, Final_tick):
     # write simple data to txt file
