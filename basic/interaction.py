@@ -112,7 +112,7 @@ def update_agents_state(agents, target_x, target_y, target_size):
 
 
 @nb.jit(nopython=True)
-def update(agents, shepherd, network_matrix):
+def update(agents, shepherd):
     # get variables
     v0 = agents[0][6]
     K_repulsion_agent = agents[0][10]  # K_repulsion_agent
@@ -356,8 +356,8 @@ def make_preodic_boundary(agents, space_x, space_y):
 @nb.jit(nopython=True)
 def evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size):
 
-    network_matrix = create_metric_network(agents)
-    agents_update = update(agents, shepherd, network_matrix)
+    # network_matrix = create_metric_network(agents)
+    agents_update = update(agents, shepherd)
 
     shepherd_update, max_agents_indexes = herd(agents, shepherd, Target_place_x, Target_place_y)
     update_agents_state(agents_update, Target_place_x, Target_place_y, Target_size)

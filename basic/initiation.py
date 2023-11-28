@@ -7,7 +7,7 @@ def initiate(agent_num, space_x, space_y, Target_size):
     # swarm
     swarm[:, 0] = np.random.uniform(50, space_x, agent_num)
     swarm[:, 1] = np.random.uniform(50, space_y, agent_num)
-    swarm[:, 2] = np.random.uniform(0, 2*np.pi, agent_num)
+    swarm[:, 2] = np.random.uniform(-np.pi, np.pi, agent_num)   # (0, 2*np.pi, agent_num)
     swarm[:, 3] = 7.5    # repulsion_distance 10  #12.5  #10 #7 #6.5 #7.5
     swarm[:, 4] = 0      # alignment_distance no use
     swarm[:, 5] = 30     # attraction_distance  30 # 20 # 25  #30
@@ -50,7 +50,7 @@ def initiate_shepherd(N_shepherd, agent_num):
     shepherd_swarm[:, 15] = 0              # collect_y
     shepherd_swarm[:, 16] = 0              # collect_agent_index
     shepherd_swarm[:, 17] = np.pi*2        # half field of view ??
-    shepherd_swarm[:, 18] = 0.01           # K_attraction_target
+    shepherd_swarm[:, 18] = 0.01           # K_attraction_target   0.01
     shepherd_swarm[:, 19] = (np.sqrt(agent_num))        # L3: distance to avoid other shepherd 10
     shepherd_swarm[:, 20] = 0              #
     shepherd_swarm[:, 21] = 0              #
