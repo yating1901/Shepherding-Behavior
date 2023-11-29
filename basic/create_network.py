@@ -41,19 +41,20 @@ def create_metric_network(agents, R, Fov):
     return metric_network
 
 
-def create_topological_network(agents, Nearest_neighbour_num):
+def create_topological_network(agents):
     # get number of agents
     num_agents = agents.shape[0]
     # create a metric with N * N dimension
-    topological_network = np.zeros(shape=(num_agents, num_agents))
+    distance_matrix = np.zeros(shape=(num_agents, num_agents))
+
     # create matrix with distance
     for agent_index in range(num_agents):
         for neighbor_index in range(num_agents):
             if neighbor_index != agent_index:
                 distance, r_angle = Get_relative_distance_angle(agents[agent_index][0], agents[agent_index][1],
                                                                 agents[neighbor_index][0], agents[neighbor_index][1])
-                topological_network[agent_index][neighbor_index] = distance
-                topological_network[neighbor_index][agent_index] = distance
+                distance_matrix[agent_index][neighbor_index] = distance
+                distance_matrix[neighbor_index][agent_index] = distance
     # rank neighbor by distance
-
+    topological_network = np.argsort(distance_matrix)  #! including agent itsself
     return topological_network
