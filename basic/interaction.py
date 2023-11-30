@@ -215,17 +215,32 @@ def collect_furthest_agent(agent_x, agent_y, shepherd_x, shepherd_y, target_plac
     return collect_point_x, collect_point_y, force_x, force_y
 
 
+# @nb.jit(nopython=True)
+# def calculate_mass_center(agents):
+#     position_matrix = np.array([agents[:, 0], agents[:, 1]]).T
+#     for index in range(agents.shape[0]):
+#         # agent state: staying -> 1; moving -> 0;
+#         if agents[index][21] == 1:
+#             position_matrix[index, :] = 0.0
+#     center_of_mass_x = np.mean(position_matrix[:, 0])
+#     center_of_mass_y = np.mean(position_matrix[:, 1])
+#     return center_of_mass_x, center_of_mass_y
+
 @nb.jit(nopython=True)
 def calculate_mass_center(agents):
-    position_matrix = np.array([agents[:, 0], agents[:, 1]]).T
+    sum_x = 0
+    sum_y = 0
+    n = 0
     for index in range(agents.shape[0]):
         # agent state: staying -> 1; moving -> 0;
-        if agents[index][21] == 1:
-            position_matrix[index, :] = 0.0
-    center_of_mass_x = np.mean(position_matrix[:, 0])
-    center_of_mass_y = np.mean(position_matrix[:, 1])
-    return center_of_mass_x, center_of_mass_y
-
+        if agents[index][21] == 0:
+            n = n+1
+            sum_x = sum_x + agents[index][0]
+            sum_y = sum_y + agents[index][1]
+    if n != 0:
+        sum_x = sum_x/n
+        sum_y = sum_y/n
+    return sum_x, sum_y
 
 @nb.jit(nopython=True)
 def drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle, target_place_x, target_place_y, l1, k):
