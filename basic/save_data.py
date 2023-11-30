@@ -1,6 +1,7 @@
 import os, sys
 import numpy as np
 import pandas as pd
+import h5py
 
 
 def save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds):
@@ -12,9 +13,33 @@ def save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_she
     file_name = ("N_sheep=" + str(N_sheep) + "_N_shepherd=" + str(N_shepherd)
                  + "_Final_tick=" + str(Final_tick) + "_Repetition=" + str(Repetition))
 
-    Data = np.vstack((Data_agents, Data_shepherds))
-    # save agents to .npy file
-    np.save(file=directory + "/" + file_name + ".npy", arr=Data)
+    # grab meaningful data
+    agent_pos = Data_agents[:, 0:3, :]
+    agent_state = Data_agents[:, 20:21, :]  # 1: staying mode
+    agent_data = np.concatenate((agent_pos, agent_state), axis=1)
+
+    shepherd_pos = Data_shepherds[:, 0:3, :]
+    shepherd_state = Data_shepherds[:, 12:13, :]  # 1: drive mode
+    shepherd_data = np.concatenate((shepherd_pos, shepherd_state), axis=1)
+    # print(agent_data.shape, shepherd_state.shape)
+    with h5py.File(directory + "/" + file_name + ".hdf5", "w") as f:
+        f.create_dataset("agent_data", data=agent_data, compression="gzip", compression_opts=1)
+        f.create_dataset("shepherd_data", data=agent_data, compression="gzip", compression_opts=1)
+
+    # # save agents to .npy file
+    # Data = np.vstack((Data_agents, Data_shepherds))
+    # np.save(file=directory + "/" + file_name + ".npy", arr=Data)
+    return
+
+
+def read_hdf5_data():
+    # get directory for the path
+    directory = os.getcwd() + "/data/"
+    file_name = 'N_sheep=200_N_shepherd=1_Final_tick=13_Repetition=0.hdf5'
+    with h5py.File(directory + file_name, "r") as f:
+        print(f.keys())
+        agents = f.get("agent_data")[:]
+        shepherd = f.get("shepherd_data")[:]
     return
 
 
