@@ -25,24 +25,30 @@ def create_distance_matrix(agents):
                 distance_matrix[agent_index][neighbor_index] = r_ij
             else:
                 distance_matrix[agent_index][agent_index] = np.nan
+    # np.fill_diagonal(distance_matrix, float("NaN"))
     return distance_matrix
 
 
 @nb.jit(nopython=True)
 def transform_angle(theta):
-    while theta >= np.pi:
-        theta = theta - 2 * np.pi
-    while theta <= -np.pi:
-        theta = theta + 2 * np.pi
+    '''Casts any (radian) angle to the
+                    equivalent in the interval (-pi, pi)'''
+    # while theta >= np.pi:
+    #     theta = theta - 2 * np.pi
+    # while theta <= -np.pi:
+    #     theta = theta + 2 * np.pi
+
+    new_theta = (theta + np.pi) % (2. * np.pi)
+    new_theta -= np.pi
     return theta
 
 
 @nb.jit(nopython=True)
 def create_metric_network(agents, R, Fov):
-    # R: length of attraction: maximum interaction range for agent
+    # R: length of attraction field: maximum interaction range for agent
     # FOV: field of view [0, pi]---- agents[agent_index][19] = np.pi/2
     # get number of agents
-    num_agents = agents.shape[0]
+    # num_agents = agents.shape[0]
     # calculate distance matrix
     distance_matrix = create_distance_matrix(agents)
     # metric_network = np.zeros(shape=(num_agents, num_agents))
