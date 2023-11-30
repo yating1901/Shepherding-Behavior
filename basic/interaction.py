@@ -5,14 +5,18 @@ import math
 
 from basic.create_network import create_metric_network
 
+@nb.jit(nopython=True)
+def transform_angle(theta):  # [-pi, pi]
+    # new_theta = (theta + np.pi) % (2. * np.pi)
+    # new_theta -= np.pi
+    while theta >= np.pi:
+        theta = theta - 2 * np.pi
+    while theta <= -np.pi:
+        theta = theta + 2 * np.pi
+    return theta
 
 @nb.jit(nopython=True)
-def reflect_angle(angle):
-    # while theata >= np.pi:
-    #     theata = theata - 2 * np.pi
-    # while theata <= -np.pi:
-    #     theata = theata + 2 * np.pi
-    # return theata
+def reflect_angle(angle):  # [-2pi, 2pi]
     while angle >= 2 * np.pi:
         angle = angle - 2 * np.pi
     while angle <= 0:
@@ -101,6 +105,33 @@ def Get_shepherd_force(agents, shepherd):
     return num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y
 
 
+# @nb.jit(nopython=True)
+# def Get_shepherd_force(agents, shepherd):
+#     num_shepherd_avoid = np.zeros(agents.shape[0])
+#     f_shepherd_force_x = np.zeros(agents.shape[0])
+#     f_shepherd_force_y = np.zeros(agents.shape[0])
+#
+#     safe_distance = agents[0][17]  # safe_distance
+#     for agent_index in range(agents.shape[0]):
+#         agent_x = agents[agent_index][0]
+#         agent_y = agents[agent_index][1]
+#         r_x = 0
+#         r_y = 0
+#         num_shepherd = 0
+#         for shepherd_index in range(shepherd.shape[0]):
+#             shepherd_x = shepherd[shepherd_index][0]
+#             shepherd_y = shepherd[shepherd_index][1]
+#             distance = np.sqrt((agent_x - shepherd_x) ** 2 + (agent_y - shepherd_y) ** 2)
+#             if distance <= safe_distance:
+#                 num_shepherd = num_shepherd + 1
+#                 r_x = r_x + (agent_x - shepherd_x) #/ distance  # unit vector  ?? check distance == 0 ?
+#                 r_y = r_y + (agent_y - shepherd_y) #/ distance  # unit vector
+#         num_shepherd_avoid[agent_index] = num_shepherd
+#         if num_shepherd != 0:
+#             f_shepherd_force_x[agent_index] = r_x / num_shepherd
+#             f_shepherd_force_y[agent_index] = r_y / num_shepherd
+#     return num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y
+
 @nb.jit(nopython=True)
 def update_agents_state(agents, target_x, target_y, target_size):
     for agent_index in range(agents.shape[0]):
@@ -112,7 +143,7 @@ def update_agents_state(agents, target_x, target_y, target_size):
             # agents[agent_index][3] = 0.01   # v_0 =0
         else:
             agents[agent_index][21] = 0
-    return
+    return agents
 
 
 @nb.jit(nopython=True)
@@ -158,7 +189,7 @@ def update(agents, shepherd):
 
         agents[agent_index][0] = (agents[agent_index][0] + (v0 + v_dot) * np.cos(agents[agent_index][2]) * tick_time)
         agents[agent_index][1] = (agents[agent_index][1] + (v0 + v_dot) * np.sin(agents[agent_index][2]) * tick_time)
-        agents[agent_index][2] = reflect_angle(agents[agent_index][2] + (w_dot + Dr) * tick_time)
+        agents[agent_index][2] = transform_angle(agents[agent_index][2] + (w_dot + Dr) * tick_time)
     return agents
 
 
@@ -185,18 +216,13 @@ def Get_furthest_agent(agents, shepherd_x, shepherd_y, target_place_x, target_pl
             agent_y = agents[agent_index][1]
             r_agent_herd, angle_agent_herd = Get_relative_distance_angle(agent_x, agent_y, shepherd_x, shepherd_y)
             angle_herd_agents[agent_index] = angle_agent_herd  # [-pi, pi]
-            dirt_angle_from_target_to_herd = angle_target_herd - angle_agent_herd  # original: [-2*pi,2*pi]
-            while angle_agent_herd >= np.pi:
-                angle_agent_herd = angle_agent_herd - 2 * np.pi
-            while angle_agent_herd <= -np.pi:
-                angle_agent_herd = angle_agent_herd + 2 * np.pi
-            dirt_angles_of_target_to_agent[
-                agent_index] = dirt_angle_from_target_to_herd  # angle between two vector: [-np.pi, np.pi]
-
+            dirt_angle_from_target_to_herd = transform_angle(angle_target_herd - angle_agent_herd)  # [-pi, pi]
+            # angle between two vector: [-np.pi, np.pi] negative: the agent its on the left side of the target
+            dirt_angles_of_target_to_agent[agent_index] = dirt_angle_from_target_to_herd
             distance_herd_agents[agent_index] = r_agent_herd
-            # dirt_angles_of_target_to_agent[agent_index] = reflect_angle(angle_target_herd - angle_agent_herd)  # original: [-pi,2*pi]
 
-    max_agent_index = int(np.argmax(np.absolute(angle_herd_agents)))  # +: clockwise, -: anti-clockwise
+    # max_agent_index = int(np.argmax(np.absolute(angle_herd_agents)))  # +: clockwise, -: anti-clockwise
+    max_agent_index = int(np.argmax(np.absolute(dirt_angles_of_target_to_agent)))  # +: clockwise, -: anti-clockwise
 
     return max_agent_index, distance_herd_agents[max_agent_index]
 
@@ -234,13 +260,14 @@ def calculate_mass_center(agents):
     for index in range(agents.shape[0]):
         # agent state: staying -> 1; moving -> 0;
         if agents[index][21] == 0:
-            n = n+1
+            n = n + 1
             sum_x = sum_x + agents[index][0]
             sum_y = sum_y + agents[index][1]
     if n != 0:
-        sum_x = sum_x/n
-        sum_y = sum_y/n
+        sum_x = sum_x / n
+        sum_y = sum_y / n
     return sum_x, sum_y
+
 
 @nb.jit(nopython=True)
 def drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle, target_place_x, target_place_y, l1, k):
@@ -395,10 +422,11 @@ def make_preodic_boundary(agents, space_x, space_y):
 @nb.jit(nopython=True)
 def evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size):
     # network_matrix = create_metric_network((agents, R, Fov))
-
+    # agent-agent, agent-shepherd interaction;
     agents_update = update(agents, shepherd)
-
+    # shepherd switch between collect and drive mode;
     shepherd_update, max_agents_indexes = herd(agents, shepherd, Target_place_x, Target_place_y)
-    update_agents_state(agents_update, Target_place_x, Target_place_y, Target_size)
+    # update agents state
+    agents_update = update_agents_state(agents_update, Target_place_x, Target_place_y, Target_size)
 
     return agents_update, shepherd_update, max_agents_indexes
