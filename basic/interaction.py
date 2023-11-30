@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-from basic.Create_Network import create_metric_network
+from basic.create_network import create_metric_network
+
 
 @nb.jit(nopython=True)
 def reflect_angle(angle):
@@ -45,6 +46,7 @@ def Get_attraction_force(agents):
 
     return num_att, f_attraction_x, f_attraction_y
 
+
 @nb.jit(nopython=True)
 def Get_repulsion_force(agents):
     num_avoid = np.zeros(agents.shape[0])
@@ -71,6 +73,7 @@ def Get_repulsion_force(agents):
 
     return num_avoid, f_avoid_x, f_avoid_y
 
+
 @nb.jit(nopython=True)
 def Get_shepherd_force(agents, shepherd):
     num_shepherd_avoid = np.zeros(agents.shape[0])
@@ -87,7 +90,7 @@ def Get_shepherd_force(agents, shepherd):
         for shepherd_index in range(shepherd.shape[0]):
             shepherd_x = shepherd[shepherd_index][0]
             shepherd_y = shepherd[shepherd_index][1]
-            distance = np.sqrt((agent_x - shepherd_x)**2 + (agent_y - shepherd_y)**2)
+            distance = np.sqrt((agent_x - shepherd_x) ** 2 + (agent_y - shepherd_y) ** 2)
             if distance <= safe_distance:
                 num_shepherd = num_shepherd + 1
                 r_x = r_x + (agent_x - shepherd_x) / distance  # unit vector  ?? check distance == 0 ?
@@ -96,6 +99,7 @@ def Get_shepherd_force(agents, shepherd):
         f_shepherd_force_x[agent_index] = r_x
         f_shepherd_force_y[agent_index] = r_y
     return num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y
+
 
 @nb.jit(nopython=True)
 def update_agents_state(agents, target_x, target_y, target_size):
@@ -130,18 +134,20 @@ def update(agents, shepherd):
     num_shepherd_avoid, f_shepherd_force_x, f_shepherd_force_y = Get_shepherd_force(agents, shepherd)
 
     for agent_index in range(agents.shape[0]):
-        if num_avoid[agent_index] != 0:   #### first priority!!!
+        if num_avoid[agent_index] != 0:  #### first priority!!!
             f_x = f_avoid_x[agent_index] * K_repulsion_agent
             f_y = f_avoid_y[agent_index] * K_repulsion_agent
         else:
-            f_x = f_attraction_x[agent_index] * K_attraction_agent + f_shepherd_force_x[agent_index] * K_repulsion_shepherd
-            f_y = f_attraction_y[agent_index] * K_attraction_agent + f_shepherd_force_y[agent_index] * K_repulsion_shepherd
+            f_x = f_attraction_x[agent_index] * K_attraction_agent + f_shepherd_force_x[
+                agent_index] * K_repulsion_shepherd
+            f_y = f_attraction_y[agent_index] * K_attraction_agent + f_shepherd_force_y[
+                agent_index] * K_repulsion_shepherd
 
         # f_x = f_avoid_x[agent_index] * K_repulsion_agent + f_attraction_x[agent_index] * K_attraction_agent  #+ f_shepherd_force_x[agent_index] * K_repulsion_shepherd
         # f_y = f_avoid_x[agent_index] * K_repulsion_agent + f_attraction_y[agent_index] * K_attraction_agent  #+ f_shepherd_force_y[agent_index] * K_repulsion_shepherd
 
         v_dot = f_x * np.cos(agents[agent_index][2]) + f_y * np.sin(agents[agent_index][2])
-        w_dot = (-f_x * np.sin(agents[agent_index][2]) + f_y * np.cos(agents[agent_index][2])) * (1/v0)  # inertia
+        w_dot = (-f_x * np.sin(agents[agent_index][2]) + f_y * np.cos(agents[agent_index][2])) * (1 / v0)  # inertia
 
         if w_dot > max_turning_angle:
             w_dot = max_turning_angle
@@ -184,7 +190,8 @@ def Get_furthest_agent(agents, shepherd_x, shepherd_y, target_place_x, target_pl
                 angle_agent_herd = angle_agent_herd - 2 * np.pi
             while angle_agent_herd <= -np.pi:
                 angle_agent_herd = angle_agent_herd + 2 * np.pi
-            dirt_angles_of_target_to_agent[agent_index] = dirt_angle_from_target_to_herd  # angle between two vector: [-np.pi, np.pi]
+            dirt_angles_of_target_to_agent[
+                agent_index] = dirt_angle_from_target_to_herd  # angle between two vector: [-np.pi, np.pi]
 
             distance_herd_agents[agent_index] = r_agent_herd
             # dirt_angles_of_target_to_agent[agent_index] = reflect_angle(angle_target_herd - angle_agent_herd)  # original: [-pi,2*pi]
@@ -209,10 +216,23 @@ def collect_furthest_agent(agent_x, agent_y, shepherd_x, shepherd_y, target_plac
 
 
 @nb.jit(nopython=True)
-def drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle, target_place_x, target_place_y, l1, k):
-    center_of_mass_x = np.mean(agents[:, 0])
-    center_of_mass_y = np.mean(agents[:, 1])
+def calculate_mass_center(agents):
+    position_matrix = np.array([agents[:, 0], agents[:, 1]]).T
+    for index in range(agents.shape[0]):
+        # agent state: staying -> 1; moving -> 0;
+        if agents[index][21] == 1:
+            position_matrix[index, :] = 0.0
+    center_of_mass_x = np.mean(position_matrix[:, 0])
+    center_of_mass_y = np.mean(position_matrix[:, 1])
+    return center_of_mass_x, center_of_mass_y
 
+
+@nb.jit(nopython=True)
+def drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle, target_place_x, target_place_y, l1, k):
+    # center_of_mass_x = np.mean(agents[:, 0])
+    # center_of_mass_y = np.mean(agents[:, 1])
+
+    center_of_mass_x, center_of_mass_y = calculate_mass_center(agents)
     distance_mass_target, angle_mass_target = Get_relative_distance_angle(center_of_mass_x, center_of_mass_y,
                                                                           target_place_x, target_place_y)
     drive_point_x = center_of_mass_x + l1 * np.cos(angle_mass_target)
@@ -253,6 +273,7 @@ def keep_distance_from_other_shepherd(shepherd):
 
     return distance_other_shepherd, angle_other_shepherd
 
+
 @nb.jit(nopython=True)
 def herd(agents, shepherd, target_place_x, target_place_y):
     max_agents_indexes = np.zeros(shepherd.shape[0])  # record the furthest agent index
@@ -267,8 +288,10 @@ def herd(agents, shepherd, target_place_x, target_place_y):
     max_turning_rate = shepherd[0][11]
     d_furthest = shepherd[0][12]
     K_attraction_target = shepherd[0][18]
-    center_of_mass_x = np.mean(agents[:, 0])
-    center_of_mass_y = np.mean(agents[:, 1])
+
+    # center_of_mass_x = np.mean(agents[:, 0])
+    # center_of_mass_y = np.mean(agents[:, 1])
+    center_of_mass_x, center_of_mass_y = calculate_mass_center(agents)
 
     distance_other_shepherd, angle_other_shepherd = keep_distance_from_other_shepherd(shepherd)
 
@@ -293,10 +316,11 @@ def herd(agents, shepherd, target_place_x, target_place_y):
 
             F_x = f_x_other_shepherd + f_att_target_x + force_x
             F_y = f_y_other_shepherd + f_att_target_y + force_y
-            shepherd[shepherd_index][14] = np.mean(agents[:, 0])   # collect_x
-            shepherd[shepherd_index][15] = np.mean(agents[:, 1])   # collect_y
+            shepherd[shepherd_index][14] = np.mean(agents[:, 0])  # collect_x
+            shepherd[shepherd_index][15] = np.mean(agents[:, 1])  # collect_y
 
-            max_agent_index, r_agent = Get_furthest_agent(agents, shepherd_x, shepherd_y, target_place_x, target_place_y)
+            max_agent_index, r_agent = Get_furthest_agent(agents, shepherd_x, shepherd_y, target_place_x,
+                                                          target_place_y)
 
             agent_x = agents[int(max_agent_index)][0]
             agent_y = agents[int(max_agent_index)][1]
@@ -355,8 +379,8 @@ def make_preodic_boundary(agents, space_x, space_y):
 
 @nb.jit(nopython=True)
 def evolve(agents, shepherd, Target_place_x, Target_place_y, Target_size):
+    # network_matrix = create_metric_network((agents, R, Fov))
 
-    # network_matrix = create_metric_network(agents)
     agents_update = update(agents, shepherd)
 
     shepherd_update, max_agents_indexes = herd(agents, shepherd, Target_place_x, Target_place_y)
