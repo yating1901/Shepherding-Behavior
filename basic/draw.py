@@ -6,6 +6,22 @@ import os, sys
 # import shutil
 from turtle import *
 
+@nb.jit(nopython=True)
+def calculate_mass_center(agents):
+    sum_x = 0
+    sum_y = 0
+    n = 0
+    for index in range(agents.shape[0]):
+        # agent state: staying -> 1; moving -> 0;
+        if agents[index][21] == 0:
+            n = n+1
+            sum_x = sum_x + agents[index][0]
+            sum_y = sum_y + agents[index][1]
+    if n != 0:
+        sum_x = sum_x/n
+        sum_y = sum_y/n
+    return sum_x, sum_y
+
 
 # @nb.jit(nopython=True)
 def draw_single(swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size):
@@ -41,8 +57,9 @@ def draw_single(swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_
         plt.plot([shepherd[i][14], shepherd[i][0]], [shepherd[i][15], shepherd[i][1]], color='cyan')
         # plt.text(shepherd[i][14] * 1.05, shepherd[i][15] * 1.05, "CP", fontsize=10)
     # draw center of mass
-    center_of_mass_x = np.mean(swarm[:, 0])
-    center_of_mass_y = np.mean(swarm[:, 1])
+    # center_of_mass_x = np.mean(swarm[:, 0])
+    # center_of_mass_y = np.mean(swarm[:, 1])
+    center_of_mass_x, center_of_mass_y = calculate_mass_center(swarm)
     plt.plot(center_of_mass_x, center_of_mass_y, "r*", markersize=5)
     plt.plot(Target_place_x, Target_place_y, "b*")
     target_circle = plt.Circle((Target_place_x, Target_place_y), radius=Target_size, facecolor='none', edgecolor='b',
@@ -72,7 +89,7 @@ def draw_dynamic(Iterations, Data_agents, Data_shepherds, Space_x, Space_y, Targ
             if file_ext.lower() in ['.png', '.mp4']:
                 os.remove(file_path)
 
-    for index in range(0, Iterations, 100):  # range(0, Iterations, 10)
+    for index in range(0, Iterations, 100):
         # print(index)
         plt.cla()
         draw_single(Data_agents[:, :, index], Data_shepherds[:, :, index], Space_x, Space_y, Target_place_x,

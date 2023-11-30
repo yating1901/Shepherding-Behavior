@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-
+# @nb.jit(nopython=True)
 def get_relative_distance_angle(target_x, target_y, focal_agent_x, focal_agent_y):
     r_x = target_x - focal_agent_x
     r_y = target_y - focal_agent_y
@@ -12,6 +12,7 @@ def get_relative_distance_angle(target_x, target_y, focal_agent_x, focal_agent_y
     return r_length, r_angle
 
 
+@nb.jit(nopython=True)
 def create_distance_matrix(agents):
     num_agents = agents.shape[0]
     # create a metric with N * N dimension
@@ -29,7 +30,7 @@ def create_distance_matrix(agents):
     return distance_matrix
 
 
-@nb.jit(nopython=True)
+# @nb.jit(nopython=True)
 def transform_angle(theta):
     '''Casts any (radian) angle to the
                     equivalent in the interval (-pi, pi)'''
@@ -43,7 +44,7 @@ def transform_angle(theta):
     return theta
 
 
-@nb.jit(nopython=True)
+# @nb.jit(nopython=True)
 def create_metric_network(agents, R, Fov):
     # R: length of attraction field: maximum interaction range for agent
     # FOV: field of view [0, pi]---- agents[agent_index][19] = np.pi/2
