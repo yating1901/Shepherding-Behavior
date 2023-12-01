@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-# @nb.jit(nopython=True)
+@nb.jit(nopython=True)
 def get_relative_distance_angle(target_x, target_y, focal_agent_x, focal_agent_y):
     r_x = target_x - focal_agent_x
     r_y = target_y - focal_agent_y
