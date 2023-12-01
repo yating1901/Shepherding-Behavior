@@ -15,11 +15,12 @@ def save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_she
 
     # grab meaningful data
     agent_pos = Data_agents[:, 0:3, :]
-    agent_state = Data_agents[:, 20:21, :]  # 1: staying mode
+    agent_state = Data_agents[:, 21:22, :]  # 1: staying mode
+    print("agent_state:", agent_state.shape)
     agent_data = np.concatenate((agent_pos, agent_state), axis=1)
 
     shepherd_pos = Data_shepherds[:, 0:3, :]
-    shepherd_state = Data_shepherds[:, 12:13, :]  # 1: drive mode
+    shepherd_state = Data_shepherds[:, 13:14, :]  # 1: drive mode
     shepherd_data = np.concatenate((shepherd_pos, shepherd_state), axis=1)
     # print(agent_data.shape, shepherd_state.shape)
     with h5py.File(directory + "/" + file_name + ".hdf5", "w") as f:
