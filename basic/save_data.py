@@ -24,7 +24,7 @@ def save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_she
     # print(agent_data.shape, shepherd_state.shape)
     with h5py.File(directory + "/" + file_name + ".hdf5", "w") as f:
         f.create_dataset("agent_data", data=agent_data, compression="gzip", compression_opts=1)
-        f.create_dataset("shepherd_data", data=agent_data, compression="gzip", compression_opts=1)
+        f.create_dataset("shepherd_data", data=shepherd_data, compression="gzip", compression_opts=1)
 
     # # save agents to .npy file
     # Data = np.vstack((Data_agents, Data_shepherds))
