@@ -102,7 +102,7 @@ def draw_dynamic(Iterations, Data_agents, Data_shepherds, Space_x, Space_y, Targ
     return
 
 
-def plot_snapshot(swarm, shepherd, repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size):
+def plot_snapshot(Final_tick, swarm, shepherd, repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size):
     # create folder
     folder_path = os.getcwd() + "/snapshot"
     if not os.path.exists(folder_path):
@@ -133,8 +133,10 @@ def plot_snapshot(swarm, shepherd, repetition, Boundary_x, Boundary_y, Target_pl
     for i in range(N_shepherd):
         plt.plot([shepherd[i][14], shepherd[i][0]], [shepherd[i][15], shepherd[i][1]], color='cyan')
     # draw center of mass ---------------> to be updated: ignore those inside the target place...
-    center_of_mass_x = np.mean(swarm[:, 0])
-    center_of_mass_y = np.mean(swarm[:, 1])
+    # center_of_mass_x = np.mean(swarm[:, 0])
+    # center_of_mass_y = np.mean(swarm[:, 1])
+    center_of_mass_x, center_of_mass_y = calculate_mass_center(swarm)
+
     plt.plot(center_of_mass_x, center_of_mass_y, "r*", markersize=5)
     plt.plot(Target_place_x, Target_place_y, "b*")
     target_circle = plt.Circle((Target_place_x, Target_place_y), radius=Target_size, facecolor='none', edgecolor='b',
@@ -144,7 +146,7 @@ def plot_snapshot(swarm, shepherd, repetition, Boundary_x, Boundary_y, Target_pl
     plt.xlim(xmin=0, xmax=Boundary_x)
     plt.ylim(ymin=0, ymax=Boundary_y)
 
-    plt.title("Ns = " + str(N_sheep) + "N = " + str(N_shepherd))
+    plt.title("Ns = " + str(N_sheep) + "N = " + str(N_shepherd) + "tick =" + str(Final_tick))
     plt.savefig(folder_path + "/" + "N_sheep=" + str(N_sheep) + "_N_shepherd=" + str(N_shepherd)
                 + "_repetition=" + str(repetition) + ".png")
 

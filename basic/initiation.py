@@ -26,7 +26,7 @@ def initiate(agent_num, space_x, space_y, Target_size):
     swarm[:, 18] = np.pi*2/3     # maximum turning rate
     swarm[:, 19] = np.pi         # field of view np.pi * 4 / 3  #240 degree
     swarm[:, 20] = Target_size
-    swarm[:, 21] = 0             # agent state: moving -> 0; staying -> 1;
+    swarm[:, 21] = 0             ### agent state: moving -> 0; staying -> 1;
     return swarm
 
 def initiate_shepherd(N_shepherd, agent_num):

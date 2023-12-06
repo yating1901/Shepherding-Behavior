@@ -4,18 +4,20 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import os, sys
+from timeit import default_timer as timer
+from datetime import timedelta
 import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
 from basic.initiation import initiate, initiate_shepherd
 from basic.interaction import evolve, make_preodic_boundary
 from basic.save_data import save_data
-from basic.draw_states import draw_state, draw_state_single
 from basic.draw import draw_single, draw_dynamic, plot_snapshot
 from basic.create_network import create_metric_network, create_topological_network
 
-N_sheep = 200
-N_shepherd = 1
+
+N_sheep = 250
+N_shepherd = 2
 Space_x = 150
 Space_y = 150
 
@@ -28,13 +30,14 @@ Boundary_y = Target_place_y + Target_size
 
 
 TICK = 10000
-Iterations = 13
+Iterations = 150000
 
 
-Repetition = 0
+Repetition = 5
 
 Num_nearst_neighbor = 5
 
+start = timer()
 if __name__ == '__main__':
     agents = initiate(N_sheep, Space_x, Space_y, Target_size)
     shepherd = initiate_shepherd(0, N_sheep)
@@ -72,14 +75,10 @@ if __name__ == '__main__':
         # print("topological_network:", topological_network)
         # print("metric_network:", metric_network)
 
-    # draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
-    # print("Repetition=", Repetition, "N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "Final_tick=", Final_tick)
+    draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
 
-    # print("L0=", shepherd[0][3], "L1=", shepherd[0][5], "L2=", shepherd[0][12], "L3=", shepherd[0][19])
-    # plot_snapshot(agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
-
-    # draw_state(Final_tick, Data_shepherds)
-
-    # draw_state_single(Final_tick, Data_shepherds)
-
+    # plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,Target_size)
     save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
+    print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "Final_tick=", Final_tick, "Repetition_", Repetition)
+    end = timer()
+    print("program takes:", timedelta(seconds=end-start), "seconds")
