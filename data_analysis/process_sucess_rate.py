@@ -82,7 +82,7 @@ def Get_dict_of_data(N_sheep):
                     count = count + 1
                     file_name_string = os.path.splitext(file)[0].split("_")
                     for item in file_name_string:
-                        if "tick" in item:
+                        if "tick" in item:    #get final ticks from the file name "tick = ..."
                             dic[keyword].append(int(item.split("=")[1]))
         # print(keyword)
         # print(count)

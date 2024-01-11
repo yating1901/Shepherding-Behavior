@@ -11,8 +11,8 @@ def read_mode_data(file):
     return data
 
 
-file1 = os.getcwd() + "/../result/drive_mode.npy"
-file2 = os.getcwd() + "/../result/collect_mode.npy"
+file1 = os.getcwd() + "/mediate_result/drive_mode.npy"
+file2 = os.getcwd() + "/mediate_result/collect_mode.npy"
 drive_data = read_mode_data(file1)
 collect_data = read_mode_data(file2)
 # print(drive_data)

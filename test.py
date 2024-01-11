@@ -16,8 +16,8 @@ from basic.draw import draw_single, draw_dynamic, plot_snapshot
 from basic.create_network import create_metric_network, create_topological_network
 
 
-N_sheep = 250
-N_shepherd = 2
+N_sheep = 400
+N_shepherd = 3
 Space_x = 150
 Space_y = 150
 
@@ -65,6 +65,7 @@ if __name__ == '__main__':
         Data_agents[:, :, tick] = agents
         Data_shepherds[:, :, tick] = shepherd
         Max_agents_indexes[:, tick] = max_agents_indexes  # only two dimension
+        # print(tick)
         # stop program if all the sheep are in the "staying" mode;
         if sum(agents[:, 21]) == N_sheep:   # finish
             Final_tick = tick
@@ -78,7 +79,7 @@ if __name__ == '__main__':
     draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
 
     # plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,Target_size)
-    save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
+    # save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
     print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "Final_tick=", Final_tick, "Repetition_", Repetition)
     end = timer()
     print("program takes:", timedelta(seconds=end-start), "seconds")
