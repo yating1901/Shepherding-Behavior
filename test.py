@@ -16,8 +16,8 @@ from basic.draw import draw_single, draw_dynamic, plot_snapshot
 from basic.create_network import create_metric_network, create_topological_network
 
 
-N_sheep = 400
-N_shepherd = 3
+N_sheep = 10
+N_shepherd = 1
 Space_x = 150
 Space_y = 150
 
@@ -30,7 +30,7 @@ Boundary_y = Target_place_y + Target_size
 
 
 TICK = 10000
-Iterations = 150000
+Iterations = 50000
 
 
 Repetition = 5

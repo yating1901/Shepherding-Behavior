@@ -17,7 +17,7 @@ def initiate(agent_num, space_x, space_y, Target_size):
     swarm[:, 9] = 0
     swarm[:, 10] = 2             # K_repulsion_agent  0.4 1 0.6 1 #2
     swarm[:, 11] = 0.8           # K_attraction  0.04 0.08 0.7 0.6 #0.8
-    swarm[:, 12] = 1.8           # K_repulsion avoid shepherd  5
+    swarm[:, 12] = 2.5           # K_repulsion avoid shepherd  5 #1.8
     swarm[:, 13] = 0.1           # K_Dr: noise strength
     swarm[:, 14] = 0.01          # tick_time 0.001
     swarm[:, 15] = 1             # alpha: acceleration 1   1
@@ -46,12 +46,12 @@ def initiate_shepherd(N_shepherd, agent_num):
     shepherd_swarm[:, 11] = np.pi*1/3      # maximum turning rate
     shepherd_swarm[:, 12] = 7.5*(np.sqrt(agent_num))*2/3    # L2: collect mode: Furthest agent to mass (35 Ns = 50) (60 Ns=100)(75 Ns = 200)# 59 N = 250
     shepherd_swarm[:, 13] = 1.0            # shepherd state: drive_mode = true
-    shepherd_swarm[:, 14] = 0              # collect_x
-    shepherd_swarm[:, 15] = 0              # collect_y
+    shepherd_swarm[:, 14] = 0              # collect_x/drive_x
+    shepherd_swarm[:, 15] = 0              # collect_y/drive_y
     shepherd_swarm[:, 16] = 0              # collect_agent_index
     shepherd_swarm[:, 17] = np.pi*2        # half field of view ??
     shepherd_swarm[:, 18] = 0.01           # K_attraction_target   0.01
-    shepherd_swarm[:, 19] = 10                               # L3: distance to avoid other shepherd 10 (np.sqrt(agent_num))*7.5 10
+    shepherd_swarm[:, 19] = 10             # L3: distance to avoid other shepherd 10 (np.sqrt(agent_num))*7.5/N_shepherd
     shepherd_swarm[:, 20] = 0              #
     shepherd_swarm[:, 21] = 0              #
 

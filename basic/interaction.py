@@ -297,9 +297,7 @@ def calculate_mass_center(agents):
 
 
 @nb.jit(nopython=True)
-def drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle, target_place_x, target_place_y, l1, k):
-    # center_of_mass_x = np.mean(agents[:, 0])
-    # center_of_mass_y = np.mean(agents[:, 1])
+def drive_the_herd(agents, shepherd_x, shepherd_y, target_place_x, target_place_y):
 
     num_agents_moving, center_of_mass_x, center_of_mass_y = calculate_mass_center(agents)
     distance_mass_target, angle_mass_target = Get_relative_distance_angle(center_of_mass_x, center_of_mass_y,
@@ -312,7 +310,7 @@ def drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle, target_place_
                                                                         shepherd_x, shepherd_y)
     force_x = distance_drive_herd * np.cos(angle_drive_herd)  #
     force_y = distance_drive_herd * np.sin(angle_drive_herd)  #
-    return force_x, force_y
+    return drive_point_x, drive_point_y, force_x, force_y
 
 
 @nb.jit(nopython=True)
@@ -349,8 +347,8 @@ def keep_distance_from_other_shepherd(shepherd):
 def herd(agents, shepherd, target_place_x, target_place_y):
     max_agents_indexes = np.zeros(shepherd.shape[0])  # record the furthest agent index
     l0 = shepherd[0][3]
-    k = shepherd[0][4]
-    l1 = shepherd[0][5]  # distance from the center of mass to the drive point ###related to N
+    #k = shepherd[0][4]
+    # l1 = shepherd[0][5]  # distance from the center of mass to the drive point ###related to N
     v0 = shepherd[0][6]
     alpha = shepherd[0][7]
     beta = shepherd[0][8]
@@ -363,7 +361,7 @@ def herd(agents, shepherd, target_place_x, target_place_y):
     # center_of_mass_x = np.mean(agents[:, 0])
     # center_of_mass_y = np.mean(agents[:, 1])
     num_agents_moving, center_of_mass_x, center_of_mass_y = calculate_mass_center(agents)
-    d_furthest = 7.5*(np.sqrt(num_agents_moving))*(2/3)
+    d_furthest = 7.5*(np.sqrt(num_agents_moving))*(2/3)   ###???? could be an issue when the agent number = 1, d_furthest = 5
 
     distance_other_shepherd, angle_other_shepherd = keep_distance_from_other_shepherd(shepherd)
 
@@ -379,8 +377,7 @@ def herd(agents, shepherd, target_place_x, target_place_y):
         if shepherd[shepherd_index][13] == 1.0:
 
             # drive_mode: attract by the mass and the target + repulsion from other shepherd
-            force_x, force_y = drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle,
-                                              target_place_x, target_place_y, l1, k)
+            drive_point_x, drive_point_y, force_x, force_y = drive_the_herd(agents, shepherd_x, shepherd_y, target_place_x, target_place_y)
             distance_shepherd_target, angle_shepherd_target = Get_relative_distance_angle(target_place_x,
                                                                                           target_place_y,
                                                                                           shepherd_x, shepherd_y)
@@ -389,8 +386,8 @@ def herd(agents, shepherd, target_place_x, target_place_y):
 
             F_x = f_x_other_shepherd + f_att_target_x + force_x
             F_y = f_y_other_shepherd + f_att_target_y + force_y
-            shepherd[shepherd_index][14] = center_of_mass_x  #np.mean(agents[:, 0])  # drive_point_x
-            shepherd[shepherd_index][15] = center_of_mass_y  #np.mean(agents[:, 1])  # drive_point_y
+            shepherd[shepherd_index][14] = drive_point_x  #np.mean(agents[:, 0])  # drive_point_x
+            shepherd[shepherd_index][15] = drive_point_y  #np.mean(agents[:, 1])  # drive_point_y
             # print("drive mode is true: drive_point_x:y", center_of_mass_x, center_of_mass_y)
 
             max_agent_index, r_agent = Get_furthest_agent(agents, shepherd_x, shepherd_y, target_place_x,
