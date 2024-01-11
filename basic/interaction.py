@@ -377,6 +377,7 @@ def herd(agents, shepherd, target_place_x, target_place_y):
         f_y_other_shepherd = distance_other_shepherd[shepherd_index] * np.sin(angle_other_shepherd[shepherd_index])
 
         if shepherd[shepherd_index][13] == 1.0:
+
             # drive_mode: attract by the mass and the target + repulsion from other shepherd
             force_x, force_y = drive_the_herd(agents, shepherd_x, shepherd_y, shepherd_angle,
                                               target_place_x, target_place_y, l1, k)
@@ -390,6 +391,7 @@ def herd(agents, shepherd, target_place_x, target_place_y):
             F_y = f_y_other_shepherd + f_att_target_y + force_y
             shepherd[shepherd_index][14] = center_of_mass_x  #np.mean(agents[:, 0])  # drive_point_x
             shepherd[shepherd_index][15] = center_of_mass_y  #np.mean(agents[:, 1])  # drive_point_y
+            # print("drive mode is true: drive_point_x:y", center_of_mass_x, center_of_mass_y)
 
             max_agent_index, r_agent = Get_furthest_agent(agents, shepherd_x, shepherd_y, target_place_x,
                                                           target_place_y)
@@ -415,9 +417,10 @@ def herd(agents, shepherd, target_place_x, target_place_y):
             F_y = f_y_other_shepherd + force_y
             shepherd[shepherd_index][14] = collect_point_x   # collect_x
             shepherd[shepherd_index][15] = collect_point_y   # collect_y
+            # print("collect mode is true: drive_point_x:y", collect_point_x, collect_point_y)
             distance_agent_mass, angle_agent_mass = Get_relative_distance_angle(collect_point_x, collect_point_y,
                                                                                 center_of_mass_x, center_of_mass_y)
-            if distance_agent_mass <= d_furthest or agents[int(shepherd[shepherd_index][16])][21] == 1.0: # or the agents are staying
+            if distance_agent_mass <= d_furthest or agents[int(shepherd[shepherd_index][16])][21] == 1.0:  # or the agents are staying
                 shepherd[shepherd_index][13] = 1.0  # drive_mode_true
 
         v_dot = F_x * np.cos(shepherd_angle) + F_y * np.sin(shepherd_angle)  # heading_direction_acceleration

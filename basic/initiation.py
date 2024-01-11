@@ -17,7 +17,7 @@ def initiate(agent_num, space_x, space_y, Target_size):
     swarm[:, 9] = 0
     swarm[:, 10] = 2             # K_repulsion_agent  0.4 1 0.6 1 #2
     swarm[:, 11] = 0.8           # K_attraction  0.04 0.08 0.7 0.6 #0.8
-    swarm[:, 12] = 5             # K_repulsion avoid shepherd  5
+    swarm[:, 12] = 1.8           # K_repulsion avoid shepherd  5
     swarm[:, 13] = 0.1           # K_Dr: noise strength
     swarm[:, 14] = 0.01          # tick_time 0.001
     swarm[:, 15] = 1             # alpha: acceleration 1   1
@@ -37,10 +37,10 @@ def initiate_shepherd(N_shepherd, agent_num):
     shepherd_swarm[:, 2] = np.random.uniform(-np.pi, np.pi, N_shepherd)
     shepherd_swarm[:, 3] = 10              # L0: collect point: from shepherd to the collect agent
     shepherd_swarm[:, 4] = 5               # K: elastic force # 2
-    shepherd_swarm[:, 5] = 7.5*(np.sqrt(agent_num))*1/3    # L1: drive point: from shepherd to mass center(40 Ns = 50)(50 N=100)(75 N = 200)#59 N = 250
-    shepherd_swarm[:, 6] = 4               # v0    #4
-    shepherd_swarm[:, 7] = 3               # alpha #4
-    shepherd_swarm[:, 8] = 0.5             # beta  #2
+    shepherd_swarm[:, 5] = 7.5*(np.sqrt(agent_num))*2/3    # L1: drive point: from shepherd to mass center(40 Ns = 50)(50 N=100)(75 N = 200)#59 N = 250
+    shepherd_swarm[:, 6] = 2               # v0    #4
+    shepherd_swarm[:, 7] = 1               # alpha #4 #3
+    shepherd_swarm[:, 8] = 1               # beta  #2 #0.5
     shepherd_swarm[:, 9] = 0.1             # Dr: noise
     shepherd_swarm[:, 10] = 0.01           # tick_time/ seconds
     shepherd_swarm[:, 11] = np.pi*1/3      # maximum turning rate
