@@ -98,8 +98,8 @@ def draw_dynamic(Iterations, Data_agents, Data_shepherds, Space_x, Space_y, Targ
     return
 
 
-def plot_snapshot(Final_tick, swarm, shepherd, repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,
-                  Target_size):
+def plot_snapshot(Final_tick, swarm, shepherd, repetition, Boundary_x, Boundary_y,
+                  Target_place_x, Target_place_y, Target_size):
     # create folder
     folder_path = os.getcwd() + "/snapshot"
     if not os.path.exists(folder_path):

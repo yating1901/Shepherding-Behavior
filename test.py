@@ -16,7 +16,7 @@ from basic.draw import draw_single, draw_dynamic, plot_snapshot
 from basic.create_network import create_metric_network, create_topological_network
 
 
-N_sheep = 10
+N_sheep = 40
 N_shepherd = 1
 Space_x = 150
 Space_y = 150
@@ -32,15 +32,16 @@ Boundary_y = Target_place_y + Target_size
 TICK = 10000
 Iterations = 50000
 
+L3 = 0
 
-Repetition = 5
+Repetition = 1
 
 Num_nearst_neighbor = 5
 
 start = timer()
 if __name__ == '__main__':
     agents = initiate(N_sheep, Space_x, Space_y, Target_size)
-    shepherd = initiate_shepherd(0, N_sheep)
+    shepherd = initiate_shepherd(0, N_sheep, L3)
     # self-organized flocking
     for tick in range(TICK):
         agents_update, shepherd_update, max_agents_indexes = evolve(agents, shepherd, Target_place_x,
@@ -48,7 +49,7 @@ if __name__ == '__main__':
         agents = agents_update
         shepherd = shepherd_update
     # prepare the shepherd and record data
-    shepherd = initiate_shepherd(N_shepherd, N_sheep)
+    shepherd = initiate_shepherd(N_shepherd, N_sheep, L3)
     Data_agents = np.zeros((agents.shape[0], agents.shape[1], Iterations), float)
     Data_shepherds = np.zeros((shepherd.shape[0], shepherd.shape[1], Iterations), float)
     Max_agents_indexes = np.zeros((N_shepherd, Iterations), int)

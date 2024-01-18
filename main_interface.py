@@ -9,8 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from basic.initiation import initiate, initiate_shepherd
 from basic.interaction import evolve, make_preodic_boundary
-from basic.save_data import save_data
-from basic.draw_states import draw_state, draw_state_single
+from basic.save_data import save_data, save_data_L3
 from basic.draw import draw_single, draw_dynamic, plot_snapshot
 from basic.create_network import create_metric_network, create_topological_network
 
@@ -32,16 +31,19 @@ if __name__ == '__main__':
                  "N_shepherd": int(sys.argv[2]),
                  "Repetition": int(sys.argv[3]),
                  "Iterations": int(sys.argv[4]),
-                 "TICK": int(sys.argv[5])}
+                 "TICK": int(sys.argv[5]),
+                 "L3": int(sys.argv[6])}
 
     N_sheep = parameter["N_sheep"]
     N_shepherd = parameter["N_shepherd"]
     Repetition = parameter["Repetition"]
     Iterations = parameter["Iterations"]
     TICK = parameter["TICK"]
+    L3 = parameter["L3"]
 
     agents = initiate(N_sheep, Space_x, Space_y, Target_size)
-    shepherd = initiate_shepherd(0, N_sheep)
+    # initiate all the parameters for shepherd
+    shepherd = initiate_shepherd(0, N_sheep, L3)
     # self-organized flocking
     for tick in range(TICK):
         agents_update, shepherd_update, max_agents_indexes = evolve(agents, shepherd, Target_place_x,
@@ -49,7 +51,7 @@ if __name__ == '__main__':
         agents = agents_update
         shepherd = shepherd_update
     # prepare the shepherd and record data
-    shepherd = initiate_shepherd(N_shepherd, N_sheep)
+    shepherd = initiate_shepherd(N_shepherd, N_sheep, L3)
     Data_agents = np.zeros((agents.shape[0], agents.shape[1], Iterations), float)
     Data_shepherds = np.zeros((shepherd.shape[0], shepherd.shape[1], Iterations), float)
     Max_agents_indexes = np.zeros((N_shepherd, Iterations), int)
@@ -67,7 +69,7 @@ if __name__ == '__main__':
         Data_shepherds[:, :, tick] = shepherd
         Max_agents_indexes[:, tick] = max_agents_indexes  # only two dimension
         # stop program if all the sheep are in the "staying" mode;
-        if sum(agents[:, 21]) == N_sheep:   # finish
+        if sum(agents[:, 21]) == N_sheep:  # finish
             Final_tick = tick
             break
         # try to create network
@@ -80,5 +82,6 @@ if __name__ == '__main__':
     # print("Repetition=", Repetition, "N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "Final_tick=", Final_tick)
 
     # print("L0=", shepherd[0][3], "L1=", shepherd[0][5], "L2=", shepherd[0][12], "L3=", shepherd[0][19])
-    plot_snapshot(agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
-    save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
+    plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,Target_size)
+    # save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
+    save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
