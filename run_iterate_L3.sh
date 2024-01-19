@@ -4,7 +4,7 @@ for N_sheep in $(seq 100 100 500)
 do
   for N_shepherd in $(seq 1 1 5)
   do
-    for Repetition in 10
+    for Repetition in $(seq 1 1 10)
     do
       for Iterations in 160000
       do
