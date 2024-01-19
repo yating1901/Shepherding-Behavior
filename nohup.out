@@ -1,0 +1,111 @@
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 35, in <module>
+    "L3": int(sys.argv[6])}
+              ~~~~~~~~^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 9, in <module>
+    import matplotlib.pyplot as plt
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/matplotlib/pyplot.py", line 61, in <module>
+    from matplotlib.figure import Figure, FigureBase, figaspect
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/matplotlib/figure.py", line 43, in <module>
+    from matplotlib import _blocking_input, backend_bases, _docstring, projections
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/matplotlib/projections/__init__.py", line 55, in <module>
+    from .. import axes, _docstring
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/matplotlib/axes/__init__.py", line 2, in <module>
+    from ._axes import *
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/matplotlib/axes/_axes.py", line 21, in <module>
+    import matplotlib.mlab as mlab
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1032, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1130, in get_data
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/yateng/Workspace/Shepherd_Behavior/main_interface.py", line 88, in <module>
+    save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
+  File "/home/yateng/Workspace/Shepherd_Behavior/basic/save_data.py", line 27, in save_data_L3
+    f.create_dataset("agent_data", data=agent_data, compression="gzip", compression_opts=9)
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/h5py/_hl/group.py", line 161, in create_dataset
+    dsid = dataset.make_new_dset(group, shape, dtype, data, name, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yateng/anaconda3/lib/python3.11/site-packages/h5py/_hl/dataset.py", line 159, in make_new_dset
+    dset_id.write(h5s.ALL, h5s.ALL, data)
+KeyboardInterrupt
