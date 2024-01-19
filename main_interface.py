@@ -40,7 +40,7 @@ if __name__ == '__main__':
     Iterations = parameter["Iterations"]
     TICK = parameter["TICK"]
     L3 = parameter["L3"]
-    for Repetition in range(1, Rep):
+    for Repetition in range(0, Rep):
         agents = initiate(N_sheep, Space_x, Space_y, Target_size)
         # initiate all the parameters for shepherd
         shepherd = initiate_shepherd(0, N_sheep, L3)

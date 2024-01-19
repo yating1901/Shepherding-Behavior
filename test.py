@@ -17,7 +17,7 @@ from basic.create_network import create_metric_network, create_topological_netwo
 
 
 N_sheep = 400
-N_shepherd = 1
+N_shepherd = 3
 Space_x = 150
 Space_y = 150
 
@@ -30,7 +30,7 @@ Boundary_y = Target_place_y + Target_size
 
 
 TICK = 10000
-Iterations = 50000
+Iterations = 150000
 
 L3 = 0
 
@@ -41,7 +41,7 @@ Num_nearst_neighbor = 5
 start = timer()
 if __name__ == '__main__':
 
-    for Repetition in range(10):
+    for Repetition in range(0, 5):
         agents = initiate(N_sheep, Space_x, Space_y, Target_size)
         shepherd = initiate_shepherd(0, N_sheep, L3)
         # self-organized flocking
@@ -79,11 +79,11 @@ if __name__ == '__main__':
             # print("topological_network:", topological_network)
             # print("metric_network:", metric_network)
 
-        draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
+        # draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
 
-        # plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,Target_size)
+        plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
         # save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
         save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
-        print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "Final_tick=", Final_tick, "Repetition_", Repetition)
+        print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "L3=", L3, "Repetition_", Repetition, "Final_tick=", Final_tick)
         end = timer()
         print("program takes:", timedelta(seconds=end-start), "seconds")
