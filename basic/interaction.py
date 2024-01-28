@@ -152,14 +152,6 @@ def update_agents_state(agents, target_x, target_y, target_size):
             agents[agent_index][21] = 1.0  # agent state: 0 -> moving; 1 -> staying;
         else:
             agents[agent_index][21] = 0.0
-        # if agents[agent_index][21] == 0 and distance < target_size:
-        #     agents[agent_index][21] = 1   # 1 -> staying;
-        #     agents[agent_index][6] = 0.5  # v0
-        # if agents[agent_index][21] == 1 and target_size <= distance <= target_size + 2.5:
-        #     agents[agent_index][6] = 0.01  # v0 non zero according to inertia
-        # if agents[agent_index][21] == 1 and distance > target_size + 2.5:
-        #     agents[agent_index][21] = 0   # agent state: 0 -> moving;
-        #     agents[agent_index][6] = 1    # v0
     return agents
 
 
@@ -192,9 +184,6 @@ def update(agents, shepherd):
             f_y = f_attraction_y[agent_index] * K_attraction_agent + f_shepherd_force_y[
                 agent_index] * K_repulsion_shepherd
 
-        # f_x = f_avoid_x[agent_index] * K_repulsion_agent + f_attraction_x[agent_index] * K_attraction_agent  #+ f_shepherd_force_x[agent_index] * K_repulsion_shepherd
-        # f_y = f_avoid_x[agent_index] * K_repulsion_agent + f_attraction_y[agent_index] * K_attraction_agent  #+ f_shepherd_force_y[agent_index] * K_repulsion_shepherd
-        ############## Add attraction to target at staying state################
         if agents[agent_index][21] == 1 and num_avoid[agent_index] == 0:  # staying state and no repulsion
             v0 = 0.5
             distance_agent_target, angle_agent_target = Get_relative_distance_angle(400,

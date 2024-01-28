@@ -40,7 +40,7 @@ if __name__ == '__main__':
     Iterations = parameter["Iterations"]
     TICK = parameter["TICK"]
     L3 = parameter["L3"]
-    for Repetition in range(0, Rep):
+    for Repetition in range(5, Rep):
         agents = initiate(N_sheep, Space_x, Space_y, Target_size)
         # initiate all the parameters for shepherd
         shepherd = initiate_shepherd(0, N_sheep, L3)
@@ -79,9 +79,9 @@ if __name__ == '__main__':
             # print("metric_network:", metric_network)
 
         # draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
-        # print("Repetition=", Repetition, "N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "Final_tick=", Final_tick)
+        # print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep,"Repetition=", Repetition,  "Final_tick=", Final_tick)
 
         # print("L0=", shepherd[0][3], "L1=", shepherd[0][5], "L2=", shepherd[0][12], "L3=", shepherd[0][19])
-        plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,Target_size)
+        # plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y,Target_size)
         # save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
         save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)

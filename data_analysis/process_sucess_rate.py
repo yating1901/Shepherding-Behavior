@@ -32,7 +32,7 @@ def plot_multi_states(shepherd_state):
     plt.subplot(N_shepherd + 1, 1, N_shepherd + 1)
     plt.plot(x, difference, 'r-')
     plt.ylabel("difference")
-    plt.savefig("./figures/state_of_shepherd.png")
+    # plt.savefig("./figures/state_of_shepherd.png")
     plt.xlabel("Time (s)")
     plt.show()
     return
@@ -67,7 +67,6 @@ def data_plot(data, N_sheep):
     plt.xticks(X, ["N = 1", "N = 2", "N = 3", "N = 4", "N = 5"])
     return
 
-
 def Get_dict_of_data(N_sheep):
     directory = os.getcwd() + "/../Data"
     files = os.listdir(directory)
@@ -82,23 +81,22 @@ def Get_dict_of_data(N_sheep):
                     count = count + 1
                     file_name_string = os.path.splitext(file)[0].split("_")
                     for item in file_name_string:
-                        if "tick" in item:    #get final ticks from the file name "tick = ..."
+                        if "tick" in item:  # get final ticks from the file name "tick = ..."
                             dic[keyword].append(int(item.split("=")[1]))
-        # print(keyword)
-        # print(count)
+        print(keyword)
+        print(count)
     return dic
 
 
 # plot time as a function of the number of shepherds
-def plot_time_shepherd():
+def plot_time_shepherd(list_of_sheep_number):
     plt.figure(figsize=(8, 6), dpi=300)
-    for N_sheep in range(100, 350, 50):
+    for N_sheep in list_of_sheep_number:
         dic = Get_dict_of_data(N_sheep)
         data = list(dic.values())
         repetition = len(data[0])
-        # print(repetition)
+        print("N_sheep=:", N_sheep, "repetition=:", repetition)
         data_plot(data, N_sheep)
-
     plt.xlabel("Shepherd number")
     plt.ylabel("Time (s)")
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),
@@ -107,9 +105,142 @@ def plot_time_shepherd():
     plt.show()
     return
 
+###############################################################################################
+def Get_dict_of_data_with_L3(N_sheep, l3):
+    directory = os.getcwd() + "/../Data"
+    files = os.listdir(directory)
+    dic = defaultdict(list)
+    # matrix = np.zeros(len(data + 1))
+    for N_shepherd in range(1, 6):
+        count = 0
+        for file in files:
+            if not os.path.isdir(file):
+                keyword = "N_sheep=" + str(N_sheep) + "_N_shepherd=" + str(N_shepherd) + "_L3=" + str(l3)
+                if keyword in file:
+                    count = count + 1
+                    file_name_string = os.path.splitext(file)[0].split("_")
+                    for item in file_name_string:
+                        if "tick" in item:  # get final ticks from the file name "tick = ..."
+                            dic[keyword].append(int(item.split("=")[1]))
+        # print(keyword)
+        # print(count)
+    return dic
 
-# plot_time_shepherd()
+def plot_time_shepherd_force(list_of_sheep_number, list_of_force):
+    for l3 in list_of_force:
+        plt.figure(figsize=(8, 6), dpi=300)
+        for N_sheep in list_of_sheep_number:
+            dic = Get_dict_of_data_with_L3(N_sheep, l3)
+            data = list(dic.values())
+            repetition = len(data[0])
+            print("L3:", l3, "N_sheep:", N_sheep, repetition)
+            data_plot(data, N_sheep)
+        plt.title("L3 = 0")
+        plt.xlabel("Shepherd number (L3 = " + str(l3) + ")")
+        plt.ylabel("Time (s)")
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),
+                   ncol=3, fancybox=True, shadow=True)
+        plt.savefig("./figures/Time_and_N_shepherd_L3="+str(l3)+".png")
+        plt.show()
+    return
+#########################################################################################
+def Get_dict_of_data_force(N_sheep, N_shepherd, list_of_force):
+    directory = os.getcwd() + "/../Data"
+    files = os.listdir(directory)
+    dic = defaultdict(list)
+    L3 = list_of_force
+    # matrix = np.zeros(len(data + 1))
+    for l3 in L3:
+        count = 0
+        for file in files:
+            if not os.path.isdir(file):
+                keyword = "N_sheep=" + str(N_sheep) + "_N_shepherd=" + str(N_shepherd) + "_L3=" + str(l3)
+                if keyword in file:
+                    count = count + 1
+                    file_name_string = os.path.splitext(file)[0].split("_")
+                    for item in file_name_string:
+                        if "tick" in item:  # get final ticks from the file name "tick = ..."
+                            dic[keyword].append(int(item.split("=")[1]))
+        print(keyword)
+        print(count)
+    return dic
 
+
+# plot finish time as a function of L3, under fixed shepherd number
+def plot_time_force(N_sheep, List_of_N_shepherd, List_of_force):
+    plt.figure(figsize=(8, 6), dpi=300)
+    n = len(List_of_force)
+    for N_shepherd in List_of_N_shepherd:
+        dic = Get_dict_of_data_force(N_sheep, N_shepherd, List_of_force)
+        data = list(dic.values())
+        repetition = len(data[0])
+        print("N_sheep=", N_sheep, "N_shepherd=", N_shepherd, "repetition=", repetition)
+        # data_plot(data, N_sheep)
+        X = List_of_force
+        Time = [np.mean(data[item]) * 0.01 for item in range(n)]
+        plt.plot(X, Time, 's-', label="N_shepherd = " + str(N_shepherd))
+        plt.xticks(X, ["L3 = 0", "L3 = 5", "L3 = 10", "L3 = 15", "L3 = 20"])
+
+    plt.title("N_sheep = " + str(N_sheep))
+    plt.xlabel("Equilibrium distance between shepherd")
+    plt.ylabel("Time (s)")
+    plt.legend()
+    # plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),ncol=3, fancybox=True, shadow=True)
+    plt.savefig("./figures/Time_and_L3_Ns="+str(N_sheep)+".png")
+    plt.show()
+    return
+
+######################################################################################################
+
+def Get_dict_of_data_force_2(N_sheep, N_shepherd, list_of_force):
+    if N_sheep == 400:
+        directory = os.getcwd() + "/../Data_N_sheep=400/N_sheep=400_N_shepherd=5"
+    else:
+        directory = os.getcwd() + "/../Data"
+    files = os.listdir(directory)
+    dic = defaultdict(list)
+    L3 = list_of_force
+    # matrix = np.zeros(len(data + 1))
+    for l3 in L3:
+        count = 0
+        for file in files:
+            if not os.path.isdir(file):
+                keyword = "N_sheep=" + str(N_sheep) + "_N_shepherd=" + str(N_shepherd) + "_L3=" + str(l3)
+                if keyword in file:
+                    count = count + 1
+                    file_name_string = os.path.splitext(file)[0].split("_")
+                    for item in file_name_string:
+                        if "tick" in item:  # get final ticks from the file name "tick = ..."
+                            dic[keyword].append(int(item.split("=")[1]))
+        print(keyword)
+        print(count)
+    return dic
+
+
+def plot_time_force_2(N_sheep, List_of_N_shepherd, List_of_force):
+    plt.figure(figsize=(8, 6), dpi=300)
+    n = len(List_of_force)
+    for N_shepherd in List_of_N_shepherd:
+        dic = Get_dict_of_data_force_2(N_sheep, N_shepherd, List_of_force)
+        data = list(dic.values())
+        repetition = len(data[0])
+        print("N_sheep=", N_sheep, "N_shepherd=", N_shepherd, "repetition=", repetition)
+        # data_plot(data, N_sheep)
+        X = List_of_force
+        Time = [np.mean(data[item]) * 0.01 for item in range(n)]
+        plt.plot(X, Time, 's-', label="N_shepherd = " + str(N_shepherd))
+        plt.xticks(X, ["L3 = 0", "L3 = 5", "L3 = 10", "L3 = 15", "L3 = 20", "L3 = 25"])
+
+    plt.title("N_sheep = " + str(N_sheep))
+    plt.xlabel("Equilibrium distance between shepherd")
+    plt.ylabel("Time (s)")
+    plt.legend()
+    # plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),ncol=3, fancybox=True, shadow=True)
+    plt.savefig("./figures/Time_and_L3_Ns="+str(N_sheep)+"N_shepherd="+str(N_shepherd)+".png")
+    plt.show()
+    return
+
+##########################################################################################
 def sucess_rate_plot(mean_success_rate, N_sheep):
     N_shepherd = len(mean_success_rate)
     # repetition = len(data[0])
@@ -125,13 +256,13 @@ def get_success_rate(N_sheep):
     Data = np.array(data, dtype=float)
     Data = 1 / (Data * 0.01)
     mean_success_rate = np.mean(Data, axis=1)  # calculate the mean value according to lines;
-    # print(mean_success_rate)
+    print("N_sheep", N_sheep, "mean_success_rate", mean_success_rate)
     return mean_success_rate
 
 
-def draw_success_rate():
+def draw_success_rate(list_of_sheep_number):
     plt.figure(figsize=(8, 6), dpi=300)
-    for N_sheep in range(100, 350, 50):
+    for N_sheep in list_of_sheep_number:
         mean_success_rate = get_success_rate(N_sheep)
         sucess_rate_plot(mean_success_rate, N_sheep)
     plt.xlabel("Shepherd number")
@@ -144,4 +275,35 @@ def draw_success_rate():
     return
 
 
-draw_success_rate()
+#################################################################################################
+
+######### plot time as a function of the number of shepherds
+list_of_force = [i for i in range(0, 25, 5)]
+list_of_sheep_number = [i for i in range(100, 500, 100)]
+# plot_time_shepherd(list_of_sheep_number)
+draw_success_rate(list_of_sheep_number)
+# plot_time_shepherd_force(list_of_sheep_number, list_of_force)
+
+
+
+###########################################################
+###### plot time as function of differnt L3 value under the same number of shepherd ##########
+# list_of_sheep_number = [i for i in range(100, 500, 100)]
+# list_of_force = [i for i in range(0, 25, 5)]
+# list_of_N_shepherd = [i for i in range(1, 6, 1)]
+# # plot_time_force(N_sheep, list_of_N_shepherd, list_of_force)
+# for n_sheep in list_of_sheep_number:
+#     plot_time_force(n_sheep, list_of_N_shepherd, list_of_force)
+
+
+####################### Ns = 400 ##############
+# n_sheep = 300
+# list_of_force = [i for i in range(0, 25, 5)]
+# list_of_N_shepherd = [i for i in range(1, 6, 1)]
+# plot_time_force(n_sheep, list_of_N_shepherd, list_of_force)
+
+#################### Ns = 400, N_shepherd = 5 ################
+# n_sheep = 400
+# list_of_N_shepherd = [5]
+# list_of_force = [i for i in range(0, 30, 5)]
+# plot_time_force_2(n_sheep, list_of_N_shepherd, list_of_force)
