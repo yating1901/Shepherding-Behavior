@@ -64,22 +64,22 @@ def data_plot(data, N_sheep):
     X = np.arange(N_shepherd) + 1
     Time = [np.mean(data[item]) * 0.01 for item in range(N_shepherd)]
     plt.plot(X, Time, 's-', label="N_sheep = " + str(N_sheep))
-    # plt.xticks(X, ["N = 1", "N = 2", "N = 3", "N = 4", "N = 5"])
-    plt.xticks(X, ["N = 1", "N = 2", "N = 3"])
+    plt.xticks(X, ["N = 1", "N = 2", "N = 3", "N = 4", "N = 5"])
     return
 
-def success_rate_plot(data, N_sheep):
-    N_shepherd = len(data)
+def success_rate_plot(data, N_sheep, n_shepherd):
+    # N_shepherd = len(data)
+    N_shepherd = n_shepherd
     # repetition = len(data[0])
     X = np.arange(N_shepherd) + 1
     Time = [1/(np.mean(data[item]) * 0.01) for item in range(N_shepherd)]
     plt.plot(X, Time, 's-', label="N_sheep = " + str(N_sheep))
-    # plt.xticks(X, ["N = 1", "N = 2", "N = 3", "N = 4", "N = 5"])
-    plt.xticks(X, ["N = 1", "N = 2", "N = 3"])
+    plt.xticks(X, ["N = 1", "N = 2", "N = 3", "N = 4", "N = 5"])
+    # plt.axis("square")
     return
 
 def Get_dict_of_data(N_sheep):
-    directory = os.getcwd() + "/../Data_using_vision" #"/../Data"
+    directory = os.getcwd() + "/../Data"
     files = os.listdir(directory)
     dic = defaultdict(list)
     # matrix = np.zeros(len(data + 1))
@@ -94,8 +94,8 @@ def Get_dict_of_data(N_sheep):
                     for item in file_name_string:
                         if "tick" in item:  # get final ticks from the file name "tick = ..."
                             dic[keyword].append(int(item.split("=")[1]))
-        print(keyword)
-        print(count)
+        # print(keyword)
+        # print(count)
     return dic
 
 
@@ -123,7 +123,7 @@ def Get_dict_of_data_with_L3(N_sheep, l3):
     files = os.listdir(directory)
     dic = defaultdict(list)
     # matrix = np.zeros(len(data + 1))
-    for N_shepherd in range(1, 4):
+    for N_shepherd in range(1, 6):
         count = 0
         for file in files:
             if not os.path.isdir(file):
@@ -141,7 +141,8 @@ def Get_dict_of_data_with_L3(N_sheep, l3):
 
 def plot_time_shepherd_force(list_of_sheep_number, list_of_force):
     for l3 in list_of_force:
-        plt.figure(figsize=(8, 6), dpi=300)
+        # plt.figure(figsize=(8, 6), dpi=300)
+        plt.figure()
         for N_sheep in list_of_sheep_number:
             dic = Get_dict_of_data_with_L3(N_sheep, l3)
             data = list(dic.values())
@@ -151,29 +152,32 @@ def plot_time_shepherd_force(list_of_sheep_number, list_of_force):
         # plt.title("L3 = 0")
         plt.xlabel("Shepherd number (L3 = " + str(l3) + ")")
         plt.ylabel("Time (s)")
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),
-                   ncol=3, fancybox=True, shadow=True)
+        plt.legend()
+        # plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),
+        #            ncol=3, fancybox=True, shadow=True)
         plt.savefig("./figures/Time_and_N_shepherd_L3=" + str(l3) + ".png")
         plt.show()
     return
 
 #################################################################################
 
-def plot_sr_shepherd_force(list_of_sheep_number, list_of_force):
+def plot_sr_shepherd_force(list_of_sheep_number, list_of_force, n_shepherd):
     for l3 in list_of_force:
-        plt.figure(figsize=(8, 6), dpi=300)
+        # plt.figure(figsize=(4, 4), dpi=300)
+        plt.figure()
         for N_sheep in list_of_sheep_number:
             dic = Get_dict_of_data_with_L3(N_sheep, l3)
             data = list(dic.values())
             repetition = len(data[0])
             # print("L3:", l3, "N_sheep:", N_sheep, repetition)
             # print("data:", data)
-            success_rate_plot(data, N_sheep)
+            success_rate_plot(data, N_sheep, n_shepherd)
         plt.title("L3 = 0")
         plt.xlabel("Shepherd number (L3 = " + str(l3) + ")")
         plt.ylabel("Success Rate")
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13),
-                   ncol=3, fancybox=True, shadow=True)
+        plt.legend()
+        # plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.13), ncol=3, fancybox=True, shadow=True)
+        # plt.axis("square")
         plt.savefig("./figures/SR_and_N_shepherd_L3=" + str(l3) + ".png")
         plt.show()
     return
@@ -440,7 +444,9 @@ def draw_success_rate(list_of_sheep_number):
 ######### plot time as a function of the number of shepherds
 list_of_force = [0]
 list_of_sheep_number = [i for i in range(100, 500, 100)]
+n_shepherd = 5
+# list_of_shepherd_number = [i for i in range(1, 5, 1)]
 # plot_time_shepherd(list_of_sheep_number)
 # draw_success_rate(list_of_sheep_number)
-# plot_time_shepherd_force(list_of_sheep_number, list_of_force)
-plot_sr_shepherd_force(list_of_sheep_number, list_of_force)
+plot_time_shepherd_force(list_of_sheep_number, list_of_force)
+# plot_sr_shepherd_force(list_of_sheep_number, list_of_force, n_shepherd)

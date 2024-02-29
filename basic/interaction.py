@@ -415,6 +415,7 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
                 # attract by the furthest agent out of FOV;
                 # using target place: x/y;
                 collect_point_x, collect_point_y, force_x, force_y = collect_furthest_agent(agent_x, agent_y, shepherd_x, shepherd_y, target_place_x, target_place_y, l0)
+
             # repulsion from other shepherd and attraction from the furthest agent;
             F_x = force_x + f_x_other_shepherd
             F_y = force_y + f_y_other_shepherd
