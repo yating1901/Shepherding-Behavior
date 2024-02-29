@@ -52,7 +52,7 @@ if __name__ == '__main__':
     runs = parameter["Repetitions"]
     # for N_sheep in range(100, 500, 100):
     #     for N_shepherd in range(4, 6, 1):
-    for Repetition in range(1, runs, 1):
+    for Repetition in range(0, runs, 1):
         agents = initiate(N_sheep, Space_x, Space_y, Target_size)
         shepherd = initiate_shepherd(0, N_sheep, L3)
         # self-organized flocking
