@@ -5,15 +5,14 @@ import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
 from basic.initiation import initiate, initiate_shepherd
-from basic.interaction import evolve, make_periodic_boundary
+from basic.interaction import evolve
 from basic.save_data import save_data, save_data_L3
 from basic.draw import draw_single, draw_dynamic, plot_snapshot
-from basic.create_network import create_metric_network, create_topological_network
 from basic.vision_functions import drive_the_herd_using_vision, plot_snapshot_of_vision_field_dynamic
 
 
-N_sheep = 200
-N_shepherd = 2
+# N_sheep = 200
+# N_shepherd = 2
 Space_x = 150
 Space_y = 150
 
@@ -24,25 +23,36 @@ Target_size = 120  # radius 100
 Boundary_x = Target_place_x + Target_size
 Boundary_y = Target_place_y + Target_size
 
-L3 = 0
+# L3 = 0
 
-Repetition = 0
+# Repetition = 0
 
-Num_nearst_neighbor = 5
+# Num_nearst_neighbor = 5
 
 VISION_HERD = False  #True
 
 TICK = 10000
 
-Iterations = 200000
+# Iterations = 200000
 
 
 
 # start = timer()
 if __name__ == '__main__':
+    parameter = {"N_sheep": int(sys.argv[1]),
+                 "N_shepherd": int(sys.argv[2]),
+                 "Iterations": int(sys.argv[3]),
+                 "L3": int(sys.argv[4]),
+                 "Repetitions": int(sys.argv[5])}
+
+    N_sheep = parameter["N_sheep"]
+    N_shepherd = parameter["N_shepherd"]
+    Iterations = parameter["Iterations"]
+    L3 = parameter["L3"]
+    runs = parameter["Repetitions"]
     # for N_sheep in range(100, 500, 100):
     #     for N_shepherd in range(4, 6, 1):
-    for Repetition in range(1, 26, 1):
+    for Repetition in range(1, runs, 1):
         agents = initiate(N_sheep, Space_x, Space_y, Target_size)
         shepherd = initiate_shepherd(0, N_sheep, L3)
         # self-organized flocking
@@ -77,8 +87,7 @@ if __name__ == '__main__':
         # Interval = 100
         # plot_snapshot_of_vision_field_dynamic(Final_tick, Data_agents, Data_shepherds, Target_place_x, Target_place_y,
         #                                       Target_size, Interval)
-        draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size, L3)
+        # draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size, L3)
 
-        # save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
-        print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "L3=", L3, "Repetition_", Repetition, "Final_tick=",
-              Final_tick)
+        save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
+        # print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "L3=", L3, "Repetition_", Repetition, "Final_tick=", Final_tick)

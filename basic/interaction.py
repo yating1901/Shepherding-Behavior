@@ -2,8 +2,6 @@ import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-
-from basic.create_network import create_metric_network
 from basic.vision_functions import drive_the_herd_using_vision, collect_the_herd_using_vision
 
 
