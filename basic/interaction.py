@@ -252,7 +252,7 @@ def drive_the_herd(agents, shepherd_x, shepherd_y, target_place_x, target_place_
                                                                           target_place_x, target_place_y)
     # update the safe drive distance to the center according to the CURRENT num of moving agents,
     # initial parameter of shepherd swarm[:,5];
-    l1_new = (2 / 3) * np.sqrt(num_agents_moving) * 10   #7.5
+    l1_new = (1 / 3) * np.sqrt(num_agents_moving) * 10   #7.5
     # L1: drive point: from shepherd to mass center
     # angle_mass_target: from the target place to the mass
     drive_point_x = center_of_mass_x + l1_new * np.cos(angle_mass_target)
@@ -318,7 +318,7 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
 
     # d_furthest = shepherd[0][12]    # L2
     if num_agents_moving >= 50:
-        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (2 / 3)  #7.5 *
+        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (1 / 3)  #7.5 *
         # Although it could be an issue when the agent number = 1, d_furthest = 5
     else:
         d_furthest = 70  ## 35 ## related to l1, and was also used in drive the herd function
