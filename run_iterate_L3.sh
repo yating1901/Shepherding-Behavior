@@ -1,6 +1,6 @@
 count=0
 Repetition=5
-for N_sheep in $(seq 100 100 200)
+for N_sheep in $(seq 100 100 100)
 do
   for N_shepherd in $(seq 1 1 5)
   do
