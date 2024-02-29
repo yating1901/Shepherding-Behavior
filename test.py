@@ -1,8 +1,3 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
 import os, sys
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -10,14 +5,14 @@ import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
 from basic.initiation import initiate, initiate_shepherd
-from basic.interaction import evolve, make_preodic_boundary
+from basic.interaction import evolve, make_periodic_boundary
 from basic.save_data import save_data, save_data_L3
 from basic.draw import draw_single, draw_dynamic, plot_snapshot
 from basic.create_network import create_metric_network, create_topological_network
 
 
-N_sheep = 100
-N_shepherd = 2
+N_sheep = 300
+N_shepherd = 3
 Space_x = 150
 Space_y = 150
 
@@ -30,11 +25,11 @@ Boundary_y = Target_place_y + Target_size
 
 
 TICK = 10000
-Iterations = 100000
+Iterations = 200000
 
-L3 = 0
+L3 = 20
 
-Repetition = 3
+Repetition = 0
 
 Num_nearst_neighbor = 5
 
@@ -82,7 +77,10 @@ if __name__ == '__main__':
 
     # plot_snapshot(Final_tick, agents, shepherd, Repetition, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size)
     # save_data(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds)
-    save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
-    print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "L3=", L3, "Repetition_", Repetition, "Final_tick=", Final_tick)
+    # save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
+    print("N_Shepherd=",N_shepherd,"N_sheep=",N_sheep,"L3=",L3,"Repetition_",Repetition,"Final_tick=",Final_tick)
     end = timer()
     print("program takes:", timedelta(seconds=end-start), "seconds")
+
+    #However, depending on the specific formulation of the shepherding task and model parameters,
+    # we also observed scenarios with an optimal number of shepherds where the guiding time becomes minimal. This appears to be related to possible obstruction of the shepherds by themselves.

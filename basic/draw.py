@@ -40,12 +40,13 @@ def draw_network(swarm):
 def draw_single(swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size):
     # draw sheep
     N = swarm.shape[0]
+    Agent_size = swarm[0][7]
     for index in range(N):
         if swarm[index, 21] == 1:  # staying state radius=2.5
-            circles = plt.Circle((swarm[index, 0], swarm[index, 1]), radius=2.5, facecolor='none', edgecolor='b',
+            circles = plt.Circle((swarm[index, 0], swarm[index, 1]), radius=Agent_size, facecolor='none', edgecolor='b',
                                  alpha=0.8)
         else:  # moving state radius=2.5
-            circles = plt.Circle((swarm[index, 0], swarm[index, 1]), radius=2.5, facecolor='none', edgecolor='g',
+            circles = plt.Circle((swarm[index, 0], swarm[index, 1]), radius=Agent_size, facecolor='none', edgecolor='g',
                                  alpha=0.8)
             # if index == 0:
             #     plt.text(swarm[index, 0] * 1.05, swarm[index, 1] * 1.05, "agent_0", fontsize = 10)
@@ -54,14 +55,22 @@ def draw_single(swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_
                headaxislength=3.5, minshaft=4, minlength=1, color='g', scale_units='inches', scale=10)
 
     # draw shepherd
-    plt.plot(shepherd[:, 0], shepherd[:, 1], marker='o', color='r', markersize=5, alpha=0.2)
-    plt.quiver(shepherd[:, 0], shepherd[:, 1], np.cos(shepherd[:, 2]), np.sin(shepherd[:, 2]), headwidth=3,
-               headlength=3, headaxislength=3.5, minshaft=4, minlength=1, color='r', scale_units='inches', scale=10)
+    # plt.plot(shepherd[:, 0], shepherd[:, 1], marker='o', color='r', markersize=Agent_size * 2, alpha=0.2)
+    # plt.quiver(shepherd[:, 0], shepherd[:, 1], np.cos(shepherd[:, 2]), np.sin(shepherd[:, 2]), headwidth=3,
+    #            headlength=3, headaxislength=3.5, minshaft=4, minlength=1, color='r', scale_units='inches', scale=10)
     # draw shepherd and its collect point
     N_shepherd = shepherd.shape[0]
     for i in range(N_shepherd):
         plt.plot([shepherd[i][14], shepherd[i][0]], [shepherd[i][15], shepherd[i][1]], color='cyan')
-        # plt.text(shepherd[i][14] * 1.05, shepherd[i][15] * 1.05, "CP", fontsize=10)
+        shepherd_state = shepherd[i][13]
+        if shepherd_state == 1:  # drive mode
+            plt.plot(shepherd[i, 0], shepherd[i, 1], marker='o', color='r', markersize=Agent_size * 2, alpha=0.2)
+            plt.quiver(shepherd[i, 0], shepherd[i, 1], np.cos(shepherd[i, 2]), np.sin(shepherd[i, 2]), headwidth=3,
+                       headlength=3, headaxislength=3.5, minshaft=4, minlength=1, color='r', scale_units='inches', scale=10)
+        else:
+            plt.plot(shepherd[i, 0], shepherd[i, 1], marker='o', color='b', markersize=Agent_size * 2, alpha=0.2)
+            plt.quiver(shepherd[i, 0], shepherd[i, 1], np.cos(shepherd[i, 2]), np.sin(shepherd[i, 2]), headwidth=3,
+                       headlength=3, headaxislength=3.5, minshaft=4, minlength=1, color='r', scale_units='inches', scale=10)
     # draw center of mass
     center_of_mass_x, center_of_mass_y = calculate_mass_center(swarm)
     plt.plot(center_of_mass_x, center_of_mass_y, "r*", markersize=5)
@@ -72,10 +81,13 @@ def draw_single(swarm, shepherd, Boundary_x, Boundary_y, Target_place_x, Target_
     plt.gca().add_patch(target_circle)
     plt.xlim(xmin=0, xmax=Boundary_x)
     plt.ylim(ymin=0, ymax=Boundary_y)
+    # plt.axis('equal')
+    # plt.axis('square')
 
 
 def draw_dynamic(Iterations, Data_agents, Data_shepherds, Space_x, Space_y, Target_place_x, Target_place_y,
-                 Target_size):
+                 Target_size, L3):
+    N_sheep = Data_agents[:, :, 0].shape[0]
     plt.figure(figsize=(8, 6), dpi=300)
     plt.ion()
     folder_path = os.getcwd() + "/images/"
@@ -92,7 +104,8 @@ def draw_dynamic(Iterations, Data_agents, Data_shepherds, Space_x, Space_y, Targ
         plt.cla()
         draw_single(Data_agents[:, :, index], Data_shepherds[:, :, index], Space_x, Space_y, Target_place_x,
                     Target_place_y, Target_size)
-        plt.title("tick = " + str(index))
+
+        plt.title("N_sheep = " + str(N_sheep) + "_L3 = " + str(L3) + "_tick = " + str(index))
         plt.savefig(folder_path + str(int(index / 100)) + ".png")
     plt.ioff()
     return

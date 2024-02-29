@@ -37,16 +37,33 @@ def plot_multi_states(shepherd_state, N_sheep, Iterations):
     return
 
 
-# calculate coordination time when shepherds are in different state;
-def calculate_differ_states(shepherd_states_data):
+def calculate_pairwise_differ_states(shepherd_states_data, Iterations):
     N_shepherd = shepherd_states_data.shape[0]
-    iterations = shepherd_states_data.shape[1]
+    iterations = Iterations
+    difference = np.zeros(iterations)
+    for tick in range(iterations):
+        count = 0
+        for start_index in range(N_shepherd - 1):
+            for end_index in range(start_index + 1, N_shepherd):
+                count = count + 1
+                if shepherd_states_data[start_index, tick] != shepherd_states_data[end_index, tick]:
+                    difference[tick] = difference[tick] + 1
+        difference[tick] = difference[tick] / count  # N_shepherd
+    value = sum(difference)
+    print("N_shepherd:", N_shepherd, "count:", count, "difference:", value, "iterations", iterations)
+    return value
+
+
+# calculate coordination time when shepherds are in different state;
+def calculate_differ_states(shepherd_states_data, Iterations):
+    N_shepherd = shepherd_states_data.shape[0]
+    iterations = Iterations
     difference = np.zeros(iterations)
     for index in range(iterations):
         if sum(shepherd_states_data[:, index]) != 0 and sum(shepherd_states_data[:, index]) != N_shepherd:
             difference[index] = 1
     value = sum(difference)
-    # print("difference:", value)
+    print("N_shepherd:", N_shepherd, "difference:", value, "iterations", iterations)
     return value
 
 
@@ -77,9 +94,9 @@ def Get_final_tick(file_name):
 
 
 ################show shepherd states in one single_data########
-# # get directory for the path
+### get directory for the path
 # directory = os.getcwd() + "/../Data/"
-# file_name = "N_sheep=100_N_shepherd=2_L3=15_Final_tick=81013_Repetition=0.hdf5"
+# file_name = "N_sheep=100_N_shepherd=1_L3=0_Final_tick=89777_Repetition=3.hdf5"
 # path = directory + file_name
 # agents_pos, agents_state, shepherd_pos, shepherd_state = read_hdf5_data(path)
 # N_sheep = agents_pos.shape[0]
@@ -97,15 +114,16 @@ def calculate_time_in_different_modes(N_shepherd):
     collect_mode_list = []
     drive_mode = dict([])
     collect_mode = dict([])
-    for sheep_index in range(100, 350, 50):
-        keyword = "N_sheep=" + str(sheep_index) + "_N_shepherd=" + str(N_shepherd)
+    L3 = 0
+    for sheep_index in range(100, 500, 100):
+        keyword = "N_sheep=" + str(sheep_index) + "_N_shepherd=" + str(N_shepherd) + "_L3=" + str(L3)
         # print(keyword)
         drive_ratio = []
         collect_ratio = []
         for file in files:
             if not os.path.isdir(file):
                 if keyword in file:
-                    # print(file)
+                    print(file)
                     path = directory + file
                     agents_pos, agents_state, shepherd_pos, shepherd_state = read_hdf5_data(path)
                     Iterations = Get_final_tick(file)
@@ -121,47 +139,12 @@ def calculate_time_in_different_modes(N_shepherd):
         drive_mode["Ns=" + str(sheep_index)] = drive_ratio
         collect_mode["Ns=" + str(sheep_index)] = collect_ratio
 
-    drive_mode_arr = np.array(drive_mode_list)
-    collect_mode_arr = np.array(collect_mode_list)
-    return drive_mode_arr, collect_mode_arr
-    # return drive_mode, collect_mode
+    drive_mode_array = np.array(drive_mode_list)
+    collect_mode_array = np.array(collect_mode_list)
+    return drive_mode_array, collect_mode_array
 
 
-# N_shepherd = 1
-# drive_mode_arr, collect_mode_arr = calculate_time_in_different_modes(N_shepherd)
-
-# def dict_write_to_csv(dic, file):
-#     with open(file, "wb") as fp:
-#         # create a writer object
-#         writer = csv.DictWriter(fp, fieldnames=dic.keys())
-#
-#         # write the header row
-#         writer.writeheader()
-#
-#         # write the data rows
-#         writer.writerow(dic)
-#     return
-#
-#
-# def dict_read_from_csv(file):
-#     with open(file, "r") as infile:
-#         # create a reader object:
-#         reader = csv.DictReader(infile)
-#
-#         # iterate through the rows
-#         for row in reader:
-#             print(row)
-#     return
-###########not used ############
-# N_shepherd = 1
-# drive_mode, collect_mode = calculate_time_in_different_modes(N_shepherd)
-# file1 = os.getcwd() + "/../result/drive_mode.csv"
-# file2 = os.getcwd() + "/../result/collect_mode.csv"
-# dict_write_to_csv(drive_mode, file1)
-# dict_write_to_csv(collect_mode, file2)
-# print("dict_drive:", list(drive_mode.items()))
-
-
+###########################generate mediate result for shepherd in different mode###
 # print("keys:", list(drive_mode.values()))
 def save_file(file, data):
     with open(file, "wb") as f:
@@ -195,9 +178,9 @@ def calculate_multi_difference(N_sheep, L3):
     files = os.listdir(directory)
     count = 0
     matrix = np.zeros(4, dtype=float)
-    for n_shepherd in range(2, 6):  # 2
+    for n_shepherd in range(2, 6):  # 6
         keyword = "N_sheep=" + str(N_sheep) + "_N_shepherd=" + str(n_shepherd) + "_L3=" + str(L3)
-        # print(keyword)
+        print(keyword)
         states = []
         for file in files:
             if not os.path.isdir(file):
@@ -207,14 +190,15 @@ def calculate_multi_difference(N_sheep, L3):
                     agents_pos, agents_state, shepherd_pos, shepherd_state = read_hdf5_data(path)
                     Iterations = Get_final_tick(file)
                     # print("Iterations:", Iterations)
-                    value = calculate_differ_states(shepherd_state) / Iterations  # ratio over running time
+                    # value = calculate_differ_states(shepherd_state, Iterations) / Iterations    # ratio over running time
+                    value = calculate_pairwise_differ_states(shepherd_state, Iterations) / Iterations
                     states.append(value)
                     # print("value:", value)
             else:
                 print("Please enter a file path!")
         mean_value = np.mean(np.array(states))  # ratio over repetitions
-        print(keyword, "repetitions=", np.array(states).shape[0], "mean_different_state_value",
-              np.mean(np.array(states)))
+        # print(keyword, "repetitions=", np.array(states).shape[0], "mean_different_state_value",
+        #       np.mean(np.array(states)))
         matrix[count] = mean_value
         count = count + 1
     return matrix
@@ -229,26 +213,28 @@ def plot_coordination_ratio(coordinate_rate_1, coordinate_rate_2, coordinate_rat
     plt.plot(x, coordinate_rate_4, '^-', color='blue', label="N_sheep = 400")
 
     plt.xticks(x, ["N = 2", "N = 3", "N = 4", "N = 5"])
-    plt.title("L3 = "+ str(L3))
+    plt.title("L3 = " + str(L3))
     plt.xlabel("Shepherd number")
     plt.ylabel("Coordination Ratio")
 
     plt.legend(loc="best")
-    plt.savefig("./figures/Coordination_Ratio_L3="+str(L3)+".png")
+    plt.savefig("./figures/Coordination_Ratio_L3=" + str(L3) + ".png")
     plt.show()
 
 
 # l3 = 20
-# n_sheep = 400
+# n_sheep = 300
 # Matrix = calculate_multi_difference(n_sheep, l3)
 # print(Matrix)
 
 ##################################################
-# l3 = 20
+# l3 = 0
+# list_of_L3 = [5, 10] #[i for i in range(0, 25, 5)]
 # list_of_sheep = [i for i in range(100, 500, 100)]
-# for n_sheep in list_of_sheep:
-#     Matrix = calculate_multi_difference(n_sheep, l3)
-#     print(Matrix)
+# for l3 in list_of_L3:
+#     for n_sheep in list_of_sheep:
+#         Matrix = calculate_multi_difference(n_sheep, l3)
+#         print(Matrix)
 
 #################################################
 # # coordination ratio plot#
@@ -281,4 +267,36 @@ def plot_coordination_ratio(coordinate_rate_1, coordinate_rate_2, coordinate_rat
 # Coordinate_rate_3 = [0.10899191, 0.07678632, 0.34647055, 0.3899159 ] ###N_shepherd = 2,3,4,5 N_sheep = 300_L3=20
 # Coordinate_rate_4 = [0.014689,   0.01714197, 0.04700806, 0.37046774]  ###N_shepherd = 2,3,4,5 N_sheep = 400_L3=20
 ###############################################################################
-# plot_coordination_ratio(Coordinate_rate_1, Coordinate_rate_2, Coordinate_rate_3, Coordinate_rate_4, 20)
+##############################New difference method: calculate_pairwise_differ_states = Cij/N #################################################
+# l3 = 0  #
+# Coordinate_rate_1 = [0.11446127, 0.16150995, 0.15245258, 0.18980776]  ###N_shepherd = 2,3,4,5 N_sheep = 100_L3=0
+# Coordinate_rate_2 = [0.02219488, 0.09343701, 0.16257676, 0.14920585]  ###N_shepherd = 2,3,4,5 N_sheep = 200_L3=0
+# Coordinate_rate_3 = [0.05145715, 0.11047195, 0.10683229, 0.13695883]  ###N_shepherd = 2,3,4,5 N_sheep = 300_L3=0
+# Coordinate_rate_4 = [0.01473957, 0.02325361, 0.06825137, 0.07935163]  ###N_shepherd = 2,3,4,5 N_sheep = 400_L3=0
+#
+# l3 = 5 #
+# Coordinate_rate_1 =  [0.4488077,  0.11242023, 0.14513916, 0.19033357] ###N_shepherd = 2,3,4,5 N_sheep = 100_L3=5
+# Coordinate_rate_2 =  [0.08492622, 0.07642292, 0.07232158, 0.12994346] ###N_shepherd = 2,3,4,5 N_sheep = 200_L3=5
+# Coordinate_rate_3 =  [0.06963093, 0.10652386, 0.11478791, 0.11081657] ###N_shepherd = 2,3,4,5 N_sheep = 300_L3=5
+# Coordinate_rate_4 =  [0.01073654, 0.05432217, 0.0376154, 0.12386883] ###N_shepherd = 2,3,4,5 N_sheep = 400_L3=5
+
+# l3 = 10 #
+# Coordinate_rate_1 =  [0.35838987, 0.19594686, 0.20509263, 0.18446148] ###N_shepherd = 2,3,4,5 N_sheep = 100_L3=10
+# Coordinate_rate_2 =  [0.23044335, 0.23346495, 0.14255964, 0.25671146] ###N_shepherd = 2,3,4,5 N_sheep = 200_L3=10
+# Coordinate_rate_3 =  [0.05542843, 0.1775585, 0.13453253, 0.12049661] ###N_shepherd = 2,3,4,5 N_sheep = 300_L3=10
+# Coordinate_rate_4 =  [0.04579048, 0.00266333, 0.0153928,  0.0605764 ]###N_shepherd = 2,3,4,5 N_sheep = 400_L3=10
+
+# l3 = 15 #
+# Coordinate_rate_1 =  [0.2497901,  0.3436127,  0.18447026, 0.20830424] ###N_shepherd = 2,3,4,5 N_sheep = 100_L3=15
+# Coordinate_rate_2 =  [0.19527684, 0.26925166, 0.27917186, 0.19795973] ###N_shepherd = 2,3,4,5 N_sheep = 200_L3=15
+# Coordinate_rate_3 =  [0.27665068, 0.09220154, 0.13620125, 0.15892195] ###N_shepherd = 2,3,4,5 N_sheep = 300_L3=15
+# Coordinate_rate_4 =  [0.004141,   0.07005232, 0.06996356, 0.12717596] ###N_shepherd = 2,3,4,5 N_sheep = 400_L3=15
+
+# l3 = 20 #
+# Coordinate_rate_1 = [0.12928679, 0.25267865, 0.30998367, 0.27725155]    ###N_shepherd = 2,3,4,5 N_sheep = 100_L3=20
+# Coordinate_rate_2 = [0.1625286,  0.10056036, 0.31199312, 0.21253594]    ###N_shepherd = 2,3,4,5 N_sheep = 200_L3=20
+# Coordinate_rate_3 = [0.10899191, 0.05119088, 0.19994449, 0.18298071]    ###N_shepherd = 2,3,4,5 N_sheep = 300_L3=20
+# Coordinate_rate_4 = [0.014689,   0.01142798, 0.02625245, 0.18189089]    ###N_shepherd = 2,3,4,5 N_sheep = 400_L3=20
+
+###############################################################################
+plot_coordination_ratio(Coordinate_rate_1, Coordinate_rate_2, Coordinate_rate_3, Coordinate_rate_4, l3)

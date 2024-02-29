@@ -20,7 +20,8 @@ collect_data = read_mode_data(file2)
 
 plt.figure(figsize=(8, 6), dpi=300)
 
-labels = ["Ns = 100", "Ns = 150", "Ns = 200", "Ns = 250", "Ns = 300"]
+# labels = ["Ns = 100", "Ns = 150", "Ns = 200", "Ns = 250", "Ns = 300"]
+labels = ["Ns = 100", "Ns = 200", "Ns = 300", "Ns = 400"]
 # print(len(labels))
 colors = [(202 / 255., 96 / 255., 17 / 255.), (255 / 255., 217 / 255., 102 / 255.),'pink', 'lightblue', 'lightgreen']
 pos = np.array(np.arange(len(drive_data))*3.0+0.35)
@@ -38,7 +39,7 @@ plt.setp(collect_plot["boxes"], facecolor="lightblue")
 
 # #
 x_position = np.array(np.arange(len(drive_data))*3.0)
-x_position_fmt = ["Ns = 100", "Ns = 150", "Ns = 200", "Ns = 250", "Ns = 300"]
+x_position_fmt = ["Ns = 100", "Ns = 200", "Ns = 300", "Ns = 400"]
 plt.xticks([i + 0.8 / 2 for i in x_position], x_position_fmt)
 #
 plt.xlabel("Number of Sheep")
