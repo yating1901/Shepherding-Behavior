@@ -252,7 +252,7 @@ def drive_the_herd(agents, shepherd_x, shepherd_y, target_place_x, target_place_
                                                                           target_place_x, target_place_y)
     # update the safe drive distance to the center according to the CURRENT num of moving agents,
     # initial parameter of shepherd swarm[:,5];
-    l1_new = (1 / 3) * np.sqrt(num_agents_moving) * 10   #7.5
+    l1_new = (3 / 4) * np.sqrt(num_agents_moving) * 10   #7.5
     # L1: drive point: from shepherd to mass center
     # angle_mass_target: from the target place to the mass
     drive_point_x = center_of_mass_x + l1_new * np.cos(angle_mass_target)
@@ -318,10 +318,10 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
 
     # d_furthest = shepherd[0][12]    # L2
     if num_agents_moving >= 50:
-        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (1 / 3)  #7.5 *
+        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (3 / 4)  #7.5 *
         # Although it could be an issue when the agent number = 1, d_furthest = 5
     else:
-        d_furthest = 70  ## 35 ## related to l1, and was also used in drive the herd function
+        d_furthest = 75  ## 35 ## related to l1, and was also used in drive the herd function
 
     # avoid the other shepherd first!
     distance_other_shepherd, angle_other_shepherd = keep_distance_from_other_shepherd(shepherd)
@@ -340,7 +340,7 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
             current_drive_agent_id = int(shepherd[shepherd_index][20])
             if not VISION_HERD:
                 # find the drive point and calculate the force attraction from the drive point; drive_point_x,
-                drive_point_x, drive_point_y, force_x, force_y = drive_the_herd(agents, shepherd_x, shepherd_y,
+                drive_point_x, drive_point_y, drive_force_x, drive_force_y = drive_the_herd(agents, shepherd_x, shepherd_y,
                                                                                 target_place_x, target_place_y)
             else:
                 # using vision
@@ -355,8 +355,8 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
             f_att_target_x = np.cos(angle_shepherd_target) * distance_shepherd_target * K_attraction_target
             f_att_target_y = np.sin(angle_shepherd_target) * distance_shepherd_target * K_attraction_target
 
-            F_x = drive_force_x + f_att_target_x + f_x_other_shepherd
-            F_y = drive_force_y + f_att_target_y + f_y_other_shepherd
+            F_x = drive_force_x + f_x_other_shepherd  #+ f_att_target_x
+            F_y = drive_force_y + f_y_other_shepherd  #+ f_att_target_y
             # print("f_x_other_shepherd:", f_x_other_shepherd)
 
             shepherd[shepherd_index][14] = drive_point_x

@@ -95,13 +95,13 @@ def Get_final_tick(file_name):
 
 ################show shepherd states in one single_data########
 ### get directory for the path
-# directory = os.getcwd() + "/../Data/"
-# file_name = "N_sheep=100_N_shepherd=1_L3=0_Final_tick=89777_Repetition=3.hdf5"
-# path = directory + file_name
-# agents_pos, agents_state, shepherd_pos, shepherd_state = read_hdf5_data(path)
-# N_sheep = agents_pos.shape[0]
-# Iterations = Get_final_tick(file_name)
-# plot_multi_states(shepherd_state, N_sheep, Iterations)
+directory = os.getcwd() + "/../data/"
+file_name = "N_sheep=100_N_shepherd=1_L3=0_Final_tick=89777_Repetition=3.hdf5"
+path = directory + file_name
+agents_pos, agents_state, shepherd_pos, shepherd_state = read_hdf5_data(path)
+N_sheep = agents_pos.shape[0]
+Iterations = Get_final_tick(file_name)
+plot_multi_states(shepherd_state, N_sheep, Iterations)
 
 
 ################# calculate time spent in different state #######
@@ -299,4 +299,4 @@ def plot_coordination_ratio(coordinate_rate_1, coordinate_rate_2, coordinate_rat
 # Coordinate_rate_4 = [0.014689,   0.01142798, 0.02625245, 0.18189089]    ###N_shepherd = 2,3,4,5 N_sheep = 400_L3=20
 
 ###############################################################################
-plot_coordination_ratio(Coordinate_rate_1, Coordinate_rate_2, Coordinate_rate_3, Coordinate_rate_4, l3)
+# plot_coordination_ratio(Coordinate_rate_1, Coordinate_rate_2, Coordinate_rate_3, Coordinate_rate_4, l3)
