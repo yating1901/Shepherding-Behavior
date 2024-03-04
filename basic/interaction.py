@@ -175,9 +175,9 @@ def update(agents, shepherd, target_x, target_y):
 
 
 @nb.jit(nopython=True)
-def Get_relative_distance_angle(target_x, target_y, focal_agent_x, focal_agent_y):
-    r_x = target_x - focal_agent_x
-    r_y = target_y - focal_agent_y
+def Get_relative_distance_angle(vector_head_x, vector_head_y, vector_end_x, vector_end_y):
+    r_x = vector_head_x - vector_end_x
+    r_y = vector_head_y - vector_end_y
     r_length = np.sqrt(r_x ** 2 + r_y ** 2)
     r_angle = np.arctan2(r_y, r_x)  # range[-pi, pi]
     return r_length, r_angle
@@ -252,7 +252,10 @@ def drive_the_herd(agents, shepherd_x, shepherd_y, target_place_x, target_place_
                                                                           target_place_x, target_place_y)
     # update the safe drive distance to the center according to the CURRENT num of moving agents,
     # initial parameter of shepherd swarm[:,5];
-    l1_new = (3 / 4) * np.sqrt(num_agents_moving) * 10   #7.5
+    if num_agents_moving >= 10:
+        l1_new = (2 / 3) * np.sqrt(num_agents_moving) * 10   #7.5
+    else:
+        l1_new = 15
     # L1: drive point: from shepherd to mass center
     # angle_mass_target: from the target place to the mass
     drive_point_x = center_of_mass_x + l1_new * np.cos(angle_mass_target)
@@ -318,10 +321,10 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
 
     # d_furthest = shepherd[0][12]    # L2
     if num_agents_moving >= 50:
-        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (3 / 4)  #7.5 *
+        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (2 / 3)  #7.5 *
         # Although it could be an issue when the agent number = 1, d_furthest = 5
     else:
-        d_furthest = 75  ## 35 ## related to l1, and was also used in drive the herd function
+        d_furthest = 50  ## 35 ## related to l1, and was also used in drive the herd function
 
     # avoid the other shepherd first!
     distance_other_shepherd, angle_other_shepherd = keep_distance_from_other_shepherd(shepherd)

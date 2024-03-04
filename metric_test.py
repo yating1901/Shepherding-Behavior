@@ -31,7 +31,7 @@ Num_nearst_neighbor = 5
 
 VISION_HERD = False  #True
 
-TICK = 10000
+TICK = 1
 
 N_sheep = 100
 N_shepherd = 1
