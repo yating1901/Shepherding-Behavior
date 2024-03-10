@@ -36,14 +36,14 @@ def initiate_shepherd(N_shepherd, agent_num, L3):
     shepherd_swarm[:, 2] = np.random.uniform(-np.pi, np.pi, N_shepherd)
     shepherd_swarm[:, 3] = 15              # L0: collect point: from shepherd to the collect agent
     shepherd_swarm[:, 4] = 5               # K: elastic force # 2
-    shepherd_swarm[:, 5] = 10*(np.sqrt(agent_num))*2/3 #3/4  #7.5*(np.sqrt(agent_num))*2/3  7.5: repulsion_distance  # L1: drive point: from shepherd to mass center(40 Ns = 50)(50 N=100)(75 N = 200)#59 N = 250
+    shepherd_swarm[:, 5] = 10*(np.sqrt(agent_num))*2/3 #[1/2, 100]=50 [3/4, 100]=75 [4/5, 100]=80  #7.5*(np.sqrt(agent_num))*2/3  7.5: repulsion_distance  # L1: drive point: from shepherd to mass center(66.6 Ns = 100)
     shepherd_swarm[:, 6] = 1               # v0    #4 #2 2 is too small to catch up the sheep
     shepherd_swarm[:, 7] = 1     #1               # alpha # acceleration rate #4 #3 #1 #2  ##3.5
     shepherd_swarm[:, 8] = 0.1   #0.1             # beta  # turning rate #2 #0.5 #1        ##0.5
     shepherd_swarm[:, 9] = 0.1             # Dr: noise
     shepherd_swarm[:, 10] = 0.01           # tick_time/ seconds
     shepherd_swarm[:, 11] = np.pi*1/3      # maximum turning rate
-    shepherd_swarm[:, 12] = 10*(np.sqrt(agent_num))*2/3 #*3/4 #7.5*(np.sqrt(agent_num))*2/3 # 7.5 = 2.5*3 # L2: d_furthest in collect mode:(35 Ns = 50)(50 Ns=100)(70.7 Ns = 200)
+    shepherd_swarm[:, 12] = 10*(np.sqrt(agent_num))*3/4 #*2/3 #*3/4 #7.5*(np.sqrt(agent_num))*2/3 # 7.5 = 2.5*3 # L2: d_furthest in collect mode:(35 Ns = 50)(50 Ns=100)(70.7 Ns = 200)
     shepherd_swarm[:, 13] = 1.0            # shepherd state: 1.0 --> drive_mode = true
     shepherd_swarm[:, 14] = 0              # collect_x/drive_x
     shepherd_swarm[:, 15] = 0              # collect_y/drive_y

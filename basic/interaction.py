@@ -321,7 +321,7 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
 
     # d_furthest = shepherd[0][12]    # L2
     if num_agents_moving >= 50:
-        d_furthest = 10 * (np.sqrt(num_agents_moving)) * (2 / 3)  #7.5 *
+        d_furthest = 10 * (np.sqrt(num_agents_moving)) *3/4 #* (2 / 3)  #7.5 *
         # Although it could be an issue when the agent number = 1, d_furthest = 5
     else:
         d_furthest = 50  ## 35 ## related to l1, and was also used in drive the herd function
@@ -355,8 +355,8 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
             distance_shepherd_target, angle_shepherd_target = Get_relative_distance_angle(target_place_x,
                                                                                           target_place_y,
                                                                                           shepherd_x, shepherd_y)
-            f_att_target_x = np.cos(angle_shepherd_target) * distance_shepherd_target * K_attraction_target
-            f_att_target_y = np.sin(angle_shepherd_target) * distance_shepherd_target * K_attraction_target
+            # f_att_target_x = np.cos(angle_shepherd_target) * distance_shepherd_target * K_attraction_target
+            # f_att_target_y = np.sin(angle_shepherd_target) * distance_shepherd_target * K_attraction_target
 
             F_x = drive_force_x + f_x_other_shepherd  #+ f_att_target_x
             F_y = drive_force_y + f_y_other_shepherd  #+ f_att_target_y

@@ -23,19 +23,20 @@ Target_size = 120  # radius 100
 Boundary_x = Target_place_x + Target_size
 Boundary_y = Target_place_y + Target_size
 
-L3 = 0
 
-Repetition = 0
 
 Num_nearst_neighbor = 5
 
 VISION_HERD = False  #True
-
 TICK = 1
 
-N_sheep = 100
-N_shepherd = 1
-Iterations = 150000
+L3 = 0
+
+Repetition = 0
+
+N_sheep = 400
+N_shepherd = 2
+Iterations = 200000
 
 
 
