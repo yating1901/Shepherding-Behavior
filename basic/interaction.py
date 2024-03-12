@@ -321,7 +321,7 @@ def herd(agents, shepherd, target_place_x, target_place_y, VISION_HERD):
 
     # d_furthest = shepherd[0][12]    # L2
     if num_agents_moving >= 50:
-        d_furthest = 10 * (np.sqrt(num_agents_moving)) *3/4 #* (2 / 3)  #7.5 *
+        d_furthest = 10 * (np.sqrt(num_agents_moving)) * 2/3   #7.5 *
         # Although it could be an issue when the agent number = 1, d_furthest = 5
     else:
         d_furthest = 50  ## 35 ## related to l1, and was also used in drive the herd function

@@ -12,8 +12,7 @@ from basic.create_network import create_metric_network, create_topological_netwo
 from basic.vision_functions import drive_the_herd_using_vision, plot_snapshot_of_vision_field_dynamic
 
 
-N_sheep = 400
-N_shepherd = 2
+
 Space_x = 150
 Space_y = 150
 
@@ -24,11 +23,18 @@ Target_size = 120  # radius 100
 Boundary_x = Target_place_x + Target_size
 Boundary_y = Target_place_y + Target_size
 
-L3 = 20
 
-Repetition = 0
+
+
 
 Num_nearst_neighbor = 5
+
+N_sheep = 300
+N_shepherd = 4
+
+Repetition = 17
+
+L3 = 0
 
 VISION_HERD = True
 
@@ -79,8 +85,8 @@ if __name__ == '__main__':
     # Interval = 100
     # plot_snapshot_of_vision_field_dynamic(Final_tick, Data_agents, Data_shepherds, Target_place_x, Target_place_y,
     #                                       Target_size, Interval)
-    draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size, L3)
+    # draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size, L3)
 
-    # save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
+    save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
     print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "L3=", L3, "Repetition_", Repetition, "Final_tick=",
           Final_tick)

@@ -43,7 +43,7 @@ def initiate_shepherd(N_shepherd, agent_num, L3):
     shepherd_swarm[:, 9] = 0.1             # Dr: noise
     shepherd_swarm[:, 10] = 0.01           # tick_time/ seconds
     shepherd_swarm[:, 11] = np.pi*1/3      # maximum turning rate
-    shepherd_swarm[:, 12] = 10*(np.sqrt(agent_num))*3/4 #*2/3 #*3/4 #7.5*(np.sqrt(agent_num))*2/3 # 7.5 = 2.5*3 # L2: d_furthest in collect mode:(35 Ns = 50)(50 Ns=100)(70.7 Ns = 200)
+    shepherd_swarm[:, 12] = 10*(np.sqrt(agent_num))*2/3 #*2/3 #*3/4 #7.5*(np.sqrt(agent_num))*2/3 # 7.5 = 2.5*3 # L2: d_furthest in collect mode:(35 Ns = 50)(50 Ns=100)(70.7 Ns = 200)
     shepherd_swarm[:, 13] = 1.0            # shepherd state: 1.0 --> drive_mode = true
     shepherd_swarm[:, 14] = 0              # collect_x/drive_x
     shepherd_swarm[:, 15] = 0              # collect_y/drive_y

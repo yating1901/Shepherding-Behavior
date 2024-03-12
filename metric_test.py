@@ -32,10 +32,10 @@ TICK = 1
 
 L3 = 0
 
-Repetition = 0
+Repetition = 30
 
-N_sheep = 400
-N_shepherd = 2
+N_sheep = 300
+N_shepherd = 5
 Iterations = 200000
 
 
@@ -76,11 +76,11 @@ if __name__ == '__main__':
             Final_tick = tick
             break
 
+    save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
+
     # Interval = 100
     # plot_snapshot_of_vision_field_dynamic(Final_tick, Data_agents, Data_shepherds, Target_place_x, Target_place_y,
     #                                       Target_size, Interval)
-    draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size, L3)
-
-    # save_data_L3(N_sheep, N_shepherd, Repetition, Final_tick, Data_agents, Data_shepherds, L3)
+    # draw_dynamic(Final_tick, Data_agents, Data_shepherds, Boundary_x, Boundary_y, Target_place_x, Target_place_y, Target_size, L3)
     print("N_Shepherd=", N_shepherd, "N_sheep=", N_sheep, "L3=", L3, "Repetition_", Repetition, "Final_tick=",
           Final_tick)
