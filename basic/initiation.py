@@ -10,12 +10,12 @@ def initiate(agent_num, space_x, space_y, Target_size):
     swarm[:, 3] = 10    # repulsion_distance 10  #12.5  #10 #7 #6.5 #7.5
     swarm[:, 4] = 0      # alignment_distance no use
     swarm[:, 5] = 25     # attraction_distance #25  #30
-    swarm[:, 6] = 1      # v0 # 0.4 # 0.1 # 1 # 1.5
+    swarm[:, 6] = 1      #1!!!! # v0 # 0.4 # 0.1 # 1 # 1.5
     swarm[:, 7] = 5      # agent_size # 2.5
     swarm[:, 8] = 0
     swarm[:, 9] = 0
     swarm[:, 10] = 2             # K_repulsion_agent  0.4 1 0.6 1 #2
-    swarm[:, 11] = 0.8           # K_attraction  0.04 0.08 0.7 0.6 #0.8
+    swarm[:, 11] = 0           #0.8 ##!!!!!!! # K_attraction  0.04 0.08 0.7 0.6 #0.8
     swarm[:, 12] = 1.5           # K_repulsion avoid shepherd  5 #1.8 #2.5
     swarm[:, 13] = 0.1           # K_Dr: noise strength
     swarm[:, 14] = 0.01          # tick_time 0.001

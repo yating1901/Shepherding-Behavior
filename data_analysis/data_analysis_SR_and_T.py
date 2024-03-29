@@ -28,8 +28,7 @@ def Get_dict_of_data(l3, N_sheep, N_shepherd, data_folder):
     return data
 
 
-
-def plot_time_sheep_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR, L2):
+def plot_time_sheep_L2(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR, L2):
     for l3 in list_of_L3:
         for N_shepherd in list_of_N_shepherd:
             Success_Rate = []
@@ -58,6 +57,7 @@ def plot_time_sheep_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path,
                 plt.ylim(0.0004, 0.0014)
             plt.xticks(X, labels)
     return
+
 
 def plot_time_shepherd_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR):
     for l3 in list_of_L3:
@@ -92,7 +92,7 @@ def plot_time_shepherd_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, pa
                 plt.ylim(400, 2200)
             else:
                 plt.errorbar(X, Success_Rate, yerr=Std_Success_Rate, fmt="-o", label="N_sheep = " + str(N_sheep))
-                plt.ylim(0.0004, 0.003)
+                plt.ylim(0.0004, 0.002)
             plt.xticks(X, labels)
         plt.title("L3 = " + str(l3))
         plt.xlabel("Number of Shepherds")
@@ -109,49 +109,62 @@ def plot_time_shepherd_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, pa
 
 
 #######################(1) plot time and SR vs N_shepherd ###################3
-# # # L3 = 0
-# # path = os.getcwd() + "/../Data_Metric_Model"
+# # L3 = 0
+# path = os.getcwd() + "/../Data_Metric_Model"
 # path = "/media/yateng/Extreme SSD/Vision_Model"
+
+# # L3 = 20
+# path = "/media/yateng/Extreme SSD/"
+
+# L3 = 40, 60
+# path = "/media/yateng/Extreme SSD/"
 #
-# # # L3 = 20
-# # path = "/media/yateng/Extreme SSD/"
-#
-# list_of_L3 = [0]
-# list_of_N_sheep = [i for i in range(100, 350, 50)]  ##[100]
+# list_of_L3 = [60]
+# list_of_N_sheep = [i for i in range(100, 350, 50)]
 # list_of_N_shepherd = [i for i in range(1, 6)]
-# SR = False  # success rate
+# SR = True  # success rate
 #
 # # plot time as a function of the number of shepherds
 # plot_time_shepherd_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR)
 
 ##########################3 plot_time_sheep_force: L2 all###################
 
-list_of_L3 = [0]
-list_of_N_sheep = [i for i in range(100, 350, 50)]  ##[100]
-list_of_N_shepherd = [1] #[i for i in range(1, 6)]
-SR = False  #True  # success rate
+# list_of_L3 = [0]
+# list_of_N_sheep = [i for i in range(100, 350, 50)]  ##[100]
+# list_of_N_shepherd = [1] #[i for i in range(1, 6)]
+# SR = False  #True  # success rate
+#
+# list_of_l2 = [0.6, 0.67, 0.75]
+#
+# plt.figure()
+# for L2 in list_of_l2:
+#     if L2 == 0.67:
+#         path = os.getcwd() + "/../Data_Metric_Model"
+#     else:
+#         path = "/media/yateng/Extreme SSD/L2=" + str(L2)
+#
+#     plot_time_sheep_force_L2(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR, L2)
+#
+# # plt.title("L3 = " + str(l3) + "_L2 = " + str(L2))
+# plt.xlabel("Number of Sheep")
+# plt.legend()
+# if not SR:
+#     plt.ylabel("Time (s)")
+#     plt.savefig("./figures/Time_and_N_sheep_L2_all" + ".png")
+# else:
+#     plt.ylabel("Success Rate")
+#     plt.savefig("./figures/SR_and_N_sheep_L2_all" + ".png")
+# plt.show()
+# plt.clf()
 
-list_of_l2 = [0.6, 0.67, 0.75]
 
-plt.figure()
-for L2 in list_of_l2:
-    if L2 == 0.67:
-        path = os.getcwd() + "/../Data_Metric_Model"
-    else:
-        path = "/media/yateng/Extreme SSD/L2=" + str(L2)
+##############plot success rate in one figure##################
+path = "/media/yateng/Extreme SSD/"
 
-    plot_time_sheep_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR, L2)
+list_of_L3 = [0, 20, 40]
+list_of_N_sheep = [i for i in range(100, 350, 50)]
+list_of_N_shepherd = [i for i in range(1, 6)]
+SR = True  # success rate
 
-# plt.title("L3 = " + str(l3) + "_L2 = " + str(L2))
-plt.xlabel("Number of Sheep")
-plt.legend()
-if not SR:
-    plt.ylabel("Time (s)")
-    plt.savefig("./figures/Time_and_N_sheep_L2_all" + ".png")
-else:
-    plt.ylabel("Success Rate")
-    plt.savefig("./figures/SR_and_N_sheep_L2_all" + ".png")
-plt.show()
-plt.clf()
-
-
+# plot time as a function of the number of shepherds
+plot_time_shepherd_force(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path, SR)

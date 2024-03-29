@@ -175,13 +175,14 @@ def plot_coordination_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, pat
             # plt.plot(x, mean_matrix, '^-', label="N_sheep = " + str(N_sheep))
             plt.errorbar(x, mean_matrix, yerr=std_matrix, fmt="-o", label="N_sheep = " + str(N_sheep))
         plt.xticks(x, labels)
-        # plt.title("L3 = " + str(L3))
-        plt.title("Vision Model")
+        plt.ylim(0, 0.7)
+        plt.title("L3 = " + str(L3))
+        # plt.title("Vision Model")
         plt.xlabel("Shepherd number")
         plt.ylabel("Coordination Ratio")
         plt.legend(loc="best")
-        # plt.savefig("./figures/Coordination_Ratio_L3=" + str(L3) + ".png")
-        plt.savefig("./figures/Coordination_Ratio_Vision_Model" + ".png")
+        plt.savefig("./figures/Coordination_Ratio_L3=" + str(L3) + ".png")
+        # plt.savefig("./figures/Coordination_Ratio_Vision_Model" + ".png")
         plt.show()
         plt.clf()
 
@@ -290,15 +291,15 @@ def save_file(file, data):
 # value3 = get_drive_mode_ratio(shepherd_state, Iterations)
 # print(value1*Iterations, value2*Iterations, value3*Iterations)
 
-########(iii) L3 = 0
+#######(iii) L3 = 0
 # path = os.getcwd() + "/../Data_Metric_Model"
 # # path = "/media/yateng/Extreme SSD/Vision_Model"
 # list_of_L3 = [0]
 # list_of_N_sheep = [i for i in range(100, 350, 50)]  # 100, 150, 200, 250, 300,
 # list_of_N_shepherd = [i for i in range(2, 6)]
 #
-# plot_drive_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
-# # plot_coordination_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
+# # plot_drive_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
+# plot_coordination_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
 
 ###############plot time as a function of the number of shepherds
 # Matrix = calculate_multi_difference(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
@@ -311,8 +312,8 @@ list_of_L3 = [20]
 list_of_N_sheep = [i for i in range(100, 350, 50)]  # 100, 150, 200, 250, 300,
 list_of_N_shepherd = [i for i in range(2, 6)]
 
-plot_drive_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
-# plot_coordination_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
-
+# plot_drive_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
+plot_coordination_ratio(list_of_L3, list_of_N_sheep, list_of_N_shepherd, path)
+#
 
 # result_vision model

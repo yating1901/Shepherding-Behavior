@@ -32,7 +32,7 @@ def plot_multi_states(shepherd_state, N_sheep, Iterations):
     plt.plot(x, difference, 'r-')
     plt.ylabel("difference")
     plt.xlabel("Time (s)")
-    # plt.savefig("./figures/state_of_shepherd=" + str(N_shepherd)+"_N_sheep="+str(N_sheep) + ".png")
+    plt.savefig("./figures/state_of_shepherd=" + str(N_shepherd)+"_N_sheep="+str(N_sheep) + ".png")
     plt.show()
     return
 
@@ -95,8 +95,12 @@ def Get_final_tick(file_name):
 
 ################show shepherd states in one single_data########
 ### get directory for the path
-directory = os.getcwd() + "/../data/"
-file_name = "N_sheep=100_N_shepherd=1_L3=0_Final_tick=89777_Repetition=3.hdf5"
+# directory = "/home/yateng/Workspace/Shepherd_Behavior/Data_Metric_Model/L3=0/N_sheep=100/" #os.getcwd() + "/../data/"
+# file_name = "N_sheep=100_N_shepherd=2_L3=0_Final_tick=59666_Repetition=6.hdf5"
+###########################################################################
+directory = "/media/yateng/Extreme SSD/L3=20/N_sheep=300/"
+file_name = "N_sheep=300_N_shepherd=3_L3=20_Final_tick=105701_Repetition=18" + ".hdf5"
+###########################################################################
 path = directory + file_name
 agents_pos, agents_state, shepherd_pos, shepherd_state = read_hdf5_data(path)
 N_sheep = agents_pos.shape[0]
